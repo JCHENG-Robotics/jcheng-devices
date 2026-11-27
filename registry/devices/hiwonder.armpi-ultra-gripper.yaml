@@ -1,0 +1,42 @@
+schema_version: 1
+kind: device-profile
+id: hiwonder.armpi-ultra-gripper
+display_name: ArmPi Ultra gripper
+category: end_effector
+status: reference
+description: >
+  Single-servo angular gripper on the ArmPi Ultra arm. The canonical range is
+  0.0 rad closed to 2.22 rad open; the raw pulse range is a hardware mapping
+  detail and never enters a cross-repository contract.
+profile_version: "0.1.0"
+vendor:
+  name: Hiwonder
+  product: ArmPi Ultra gripper
+  source: "Vendor runtime image and the supervised M5.2 gripper session."
+  verification: unverified
+verification:
+  status: partially_verified
+  evidence:
+    - "https://github.com/JCHENG-Robotics/jcheng-system/blob/main/docs/ACCEPTANCE.md"
+    - "https://github.com/JCHENG-Robotics/jcheng-learning/blob/main/src/jcheng_learning/profiles/armpi_ultra.yaml"
+  date: "2026-11-25"
+  notes: >
+    The observed reachable pulse range (about 183-645) is narrower than the
+    nominal range (170-700). Gripper force, repeatability and object-dependent
+    stopping behaviour are not measured.
+hardware:
+  bus: "Serial bus servo, gripper servo on the arm bus"
+  interfaces:
+    - "bus servo controller"
+end_effector:
+  kind: angular_gripper
+  canonical_range_rad: [0.0, 2.22]
+  pulse_range: {min: 170, max: 700}
+  source: "Canonical range from the learning adapter profile; nominal pulse range from the vendor mapping. Observed reachable range is narrower."
+  verified: false
+capabilities:
+  - end_effector.position_control
+notes: >
+  A gripper command has no force limit in the current platform. Closing on an
+  object stalls the servo; completion is judged by direction and minimum
+  displacement, not by an exact pulse target.

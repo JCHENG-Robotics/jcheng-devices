@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=71.0.0,<85.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jcheng-devices"
+version = "0.1.0"
+description = "JCHENG Robotics device library: declarative profiles, capability model and offline validation"
+requires-python = ">=3.10"
+dependencies = [
+    "PyYAML==6.0.2",
+    "jsonschema==4.26.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest==8.3.4",
+]
+
+[project.scripts]
+jcheng-devices = "jcheng_devices.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+jcheng_devices = ["schemas/*.json"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-ra"

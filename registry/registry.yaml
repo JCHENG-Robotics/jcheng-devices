@@ -1,0 +1,32 @@
+# Registry index. Every profile is registered explicitly; there is no
+# filesystem auto-discovery. Paths are relative to this directory and must
+# stay inside it. Identifiers are unique across devices and capabilities.
+schema_version: 1
+devices:
+  - id: hiwonder.armpi-ultra
+    path: devices/hiwonder.armpi-ultra.yaml
+  - id: hiwonder.armpi-ultra-gripper
+    path: devices/hiwonder.armpi-ultra-gripper.yaml
+  - id: hiwonder.armpi-ultra-chassis
+    path: devices/hiwonder.armpi-ultra-chassis.yaml
+  - id: intel.realsense-d435i
+    path: devices/intel.realsense-d435i.yaml
+  - id: lslidar.m10
+    path: devices/lslidar.m10.yaml
+  - id: agilex.piper-x
+    path: devices/agilex.piper-x.yaml
+capabilities:
+  - id: arm.position_control
+    path: capabilities/arm.position_control.yaml
+  - id: arm.joint_feedback
+    path: capabilities/arm.joint_feedback.yaml
+  - id: end_effector.position_control
+    path: capabilities/end_effector.position_control.yaml
+  - id: base.velocity_intent
+    path: capabilities/base.velocity_intent.yaml
+  - id: sensor.rgb_stream
+    path: capabilities/sensor.rgb_stream.yaml
+  - id: sensor.depth_stream
+    path: capabilities/sensor.depth_stream.yaml
+  - id: sensor.laserscan
+    path: capabilities/sensor.laserscan.yaml

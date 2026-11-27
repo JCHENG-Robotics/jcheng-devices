@@ -1,0 +1,47 @@
+schema_version: 1
+kind: capability-profile
+id: sensor.depth_stream
+display_name: Depth image stream
+category: sensor
+description: >
+  A depth sensor delivers metric depth images with a capture timestamp and an
+  optical frame. Colour and depth are only interchangeable when they come from
+  one aligned source.
+parameters:
+  - name: width
+    type: int
+    unit: px
+    description: "Depth image width."
+    required: true
+  - name: height
+    type: int
+    unit: px
+    description: "Depth image height."
+    required: true
+  - name: rate_hz
+    type: float
+    unit: Hz
+    description: "Nominal depth rate."
+    required: true
+  - name: aligned_to_color
+    type: bool
+    description: "Whether depth is registered to the colour stream."
+    required: true
+feedback:
+  - name: capture_timestamp
+    type: string
+    description: "Capture time at the source."
+  - name: frame_id
+    type: string
+    description: "Optical frame of the depth image."
+constraints:
+  - "Depth without a matching colour frame and optical frame is not fused."
+  - "A split colour/depth deployment must declare aligned_to_color as false and must not back-project one stream with the other."
+  - "Depth noise, holes and range accuracy are device-specific and must be measured per device."
+verification:
+  status: unverified
+  evidence: []
+  date: ""
+  notes: >
+    The reference robot currently runs a split colour/depth deployment; see
+    intel.realsense-d435i for the device-level caveat.

@@ -1,0 +1,35 @@
+schema_version: 1
+kind: capability-profile
+id: base.velocity_intent
+display_name: Mobile base velocity intent
+category: mobile_base
+description: >
+  A mobile base accepts bounded linear and angular velocity intent. This
+  profile describes the platform capability; the mobile capability publishes
+  intent and the system layer applies the lease, deadman and base limits.
+parameters:
+  - name: linear_mps
+    type: float
+    unit: m/s
+    description: "Forward or lateral velocity intent; the sign convention comes from the system contract."
+    required: true
+  - name: angular_rad_s
+    type: float
+    unit: rad/s
+    description: "Yaw-rate intent."
+    required: true
+feedback:
+  - name: wheel_odometry_available
+    type: bool
+    description: "Whether the platform exposes wheel feedback. It is not a claim that odometry is trustworthy."
+constraints:
+  - "Intent only: the system layer owns the lease, deadman, stop latch and speed limits."
+  - "A missing or stale deadman means zero velocity intent, never the last value."
+  - "No encoder model or wheel geometry is stated until a source is recorded."
+verification:
+  status: unverified
+  evidence: []
+  date: ""
+  notes: >
+    Chassis feedback, payload and measured speed limits are not documented in
+    this repository.

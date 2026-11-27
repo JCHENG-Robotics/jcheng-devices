@@ -1,0 +1,40 @@
+schema_version: 1
+kind: device-profile
+id: lslidar.m10
+display_name: LSLIDAR M10
+category: sensor
+status: planned
+description: >
+  Two-dimensional LiDAR intended for the mobile base. It is not connected on
+  the current robot, so this profile records the planned interface envelope
+  only and explicitly marks every value unverified.
+profile_version: "0.1.0"
+vendor:
+  name: LSLIDAR
+  product: M10
+  source: "jcheng-mobile integration contract; no device has been connected."
+  verification: unverified
+verification:
+  status: unverified
+  evidence: []
+  date: ""
+  notes: >
+    The device is not connected as of 2026-11-27. Range, field of view and rate
+    are interface expectations from the mobile contract, not measurements.
+hardware:
+  interfaces:
+    - "serial (planned)"
+sensor:
+  sensor_type: lidar_2d
+  model: LSLIDAR M10
+  interface: serial
+  rate_hz: 10.0
+  range_m: [0.05, 12.0]
+  fov_deg: 360
+  source: "Interface expectation in the jcheng-mobile integration contract; not measured."
+  verified: false
+capabilities:
+  - sensor.laserscan
+notes: >
+  Registration is deliberately ahead of the hardware. A planned device may
+  carry an unverified interface envelope, but no measured claim.

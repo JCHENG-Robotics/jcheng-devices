@@ -1,0 +1,43 @@
+schema_version: 1
+kind: capability-profile
+id: arm.position_control
+display_name: Joint position control
+category: arm
+description: >
+  A serial arm can accept bounded joint position targets and report joint
+  positions. The profile describes the device capability only; it defines no
+  command path, grants no authority and is not an execution interface.
+parameters:
+  - name: joint_names
+    type: list
+    description: "Ordered joint names; the order defines the target vector."
+    required: true
+  - name: target_deg
+    type: list
+    unit: deg
+    description: "Target joint positions in degrees, one per joint name."
+    required: true
+  - name: duration_s
+    type: duration
+    unit: s
+    description: "Optional requested motion duration; the system layer may clamp it."
+    required: false
+feedback:
+  - name: position_deg
+    type: list
+    unit: deg
+    description: "Measured joint positions from the bus, not from a command cache."
+    rate_hz: 10.0
+constraints:
+  - "Descriptive only: execution is requested through jcheng-system, which owns the lease, deadman, limits and stop latch."
+  - "Joint limits in a device profile are advisory data and must be re-verified before a real motion session."
+  - "A command-cache topic is never accepted as position feedback."
+requires:
+  - arm.joint_feedback
+verification:
+  status: unverified
+  evidence: []
+  date: ""
+  notes: >
+    No runtime node uses this profile in v0.1.0. The description is derived
+    from the system documentation; it is not a hardware validation.

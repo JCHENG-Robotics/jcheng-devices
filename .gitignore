@@ -1,0 +1,26 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+build/
+install/
+log/
+*.egg-info/
+.venv/
+.DS_Store
+
+# Recordings, model weights and binary meshes stay outside the repository.
+*.bag
+*.mcap
+*.db3
+*.mp4
+*.avi
+*.pt
+*.onnx
+*.engine
+*.stl
+*.STL
+*.dae
+*.glb
+
+# Generated validation output.
+*.digest.json

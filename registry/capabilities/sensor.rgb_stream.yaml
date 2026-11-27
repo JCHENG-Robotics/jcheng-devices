@@ -1,0 +1,46 @@
+schema_version: 1
+kind: capability-profile
+id: sensor.rgb_stream
+display_name: RGB image stream
+category: sensor
+description: >
+  A camera delivers colour images with a capture timestamp and an optical
+  frame. The profile describes the stream, not a device driver or a topic.
+parameters:
+  - name: width
+    type: int
+    unit: px
+    description: "Image width."
+    required: true
+  - name: height
+    type: int
+    unit: px
+    description: "Image height."
+    required: true
+  - name: rate_hz
+    type: float
+    unit: Hz
+    description: "Nominal frame rate."
+    required: true
+  - name: encoding
+    type: string
+    description: "Pixel encoding, for example rgb8 or bgr8."
+    required: true
+feedback:
+  - name: capture_timestamp
+    type: string
+    description: "Capture time at the source; a receive time is not a substitute."
+  - name: frame_id
+    type: string
+    description: "Optical frame that the image is expressed in."
+constraints:
+  - "Only one process may own a camera; a second consumer must use the first owner's stream."
+  - "A stream without a capture timestamp or an optical frame is not usable for metric back-projection."
+  - "No device is opened by this repository."
+verification:
+  status: unverified
+  evidence: []
+  date: ""
+  notes: >
+    Per-device rates and resolutions live in the device profile. No consumer
+    exists in v0.1.0.

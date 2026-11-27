@@ -1,0 +1,82 @@
+schema_version: 1
+kind: device-profile
+id: agilex.piper-x
+display_name: AgileX PiPER X
+category: arm
+status: candidate
+description: >
+  Six-degree-of-freedom lightweight arm evaluated as the second ecosystem
+  device. The joint limits below are copied from the learning adapter profile
+  and have not been measured or checked against a vendor datasheet in this
+  repository.
+profile_version: "0.1.0"
+vendor:
+  name: AgileX
+  product: PiPER X
+  source: "jcheng-learning adapter profile; vendor datasheet review pending."
+  verification: unverified
+verification:
+  status: unverified
+  evidence: []
+  date: ""
+  notes: >
+    No PiPER X hardware is present in this workspace. Joint limits, velocity,
+    payload and bus configuration must be reviewed against the vendor datasheet
+    before the status moves to reference.
+hardware:
+  interfaces:
+    - "not recorded; datasheet review pending"
+kinematics:
+  dof: 6
+  control_modes:
+    - position
+  feedback:
+    - "vendor feedback (to be confirmed)"
+  workspace:
+    description: "No workspace envelope is claimed."
+    verified: false
+    source: "No measurement recorded."
+  joints:
+    - name: joint1
+      role: joint1
+      type: revolute
+      limits: {min_deg: -150.0, max_deg: 150.0}
+      source: "Learning adapter profile, rad limits converted (-2.6179938..2.6179938 rad)."
+      verified: false
+    - name: joint2
+      role: joint2
+      type: revolute
+      limits: {min_deg: 0.0, max_deg: 180.0}
+      source: "Learning adapter profile, rad limits converted (0..3.1415926 rad)."
+      verified: false
+    - name: joint3
+      role: joint3
+      type: revolute
+      limits: {min_deg: -170.0, max_deg: 0.0}
+      source: "Learning adapter profile, rad limits converted (-2.9670597..0 rad)."
+      verified: false
+    - name: joint4
+      role: joint4
+      type: revolute
+      limits: {min_deg: -89.0, max_deg: 89.0}
+      source: "Learning adapter profile, rad limits converted (-1.553343..1.553343 rad)."
+      verified: false
+    - name: joint5
+      role: joint5
+      type: revolute
+      limits: {min_deg: -89.0, max_deg: 89.0}
+      source: "Learning adapter profile, rad limits converted (-1.553343..1.553343 rad)."
+      verified: false
+    - name: joint6
+      role: joint6
+      type: revolute
+      limits: {min_deg: -165.0, max_deg: 165.0}
+      source: "Learning adapter profile, rad limits converted (-2.88..2.88 rad)."
+      verified: false
+capabilities:
+  - arm.position_control
+  - arm.joint_feedback
+notes: >
+  The PiPER X gripper is a prismatic end effector in the learning adapter
+  profile and is not registered here yet; it becomes a separate end-effector
+  profile when the device is adopted.

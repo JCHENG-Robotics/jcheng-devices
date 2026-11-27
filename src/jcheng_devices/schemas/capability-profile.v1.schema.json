@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jcheng-robotics.github.io/schemas/jcheng.capability-profile.v1.schema.json",
+  "title": "JCHENG device capability profile v1",
+  "description": "What a class of device can do and what it feeds back. This is a device description, not an execution API: it grants no authority and defines no command path.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "kind",
+    "id",
+    "display_name",
+    "category",
+    "description",
+    "parameters",
+    "feedback",
+    "constraints",
+    "verification"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "kind": {"const": "capability-profile"},
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$",
+      "description": "Capability identifier: <domain>.<capability>, for example arm.position_control."
+    },
+    "display_name": {"type": "string", "minLength": 1, "maxLength": 120},
+    "category": {
+      "enum": ["arm", "mobile_base", "end_effector", "sensor", "teleop_device"]
+    },
+    "description": {"type": "string", "minLength": 10, "maxLength": 2000},
+    "parameters": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/parameter"}
+    },
+    "feedback": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/feedback"}
+    },
+    "constraints": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"type": "string", "minLength": 1},
+      "description": "Binding limits or boundary statements. At least one constraint is required so a capability cannot be declared without its safety envelope."
+    },
+    "requires": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
+      }
+    },
+    "verification": {"$ref": "#/$defs/verification"}
+  },
+  "$defs": {
+    "verificationStatus": {
+      "enum": ["verified", "partially_verified", "unverified"]
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "evidence", "date", "notes"],
+      "properties": {
+        "status": {"$ref": "#/$defs/verificationStatus"},
+        "evidence": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "date": {"type": "string", "pattern": "^([0-9]{4}-[0-9]{2}-[0-9]{2})?$"},
+        "notes": {"type": "string"}
+      }
+    },
+    "parameter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type", "description", "required"],
+      "properties": {
+        "name": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+        "type": {"enum": ["bool", "int", "float", "string", "duration", "list"]},
+        "unit": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "required": {"type": "boolean"}
+      }
+    },
+    "feedback": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "type", "description"],
+      "properties": {
+        "name": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+        "type": {"enum": ["bool", "int", "float", "string", "list"]},
+        "unit": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "rate_hz": {"type": "number", "exclusiveMinimum": 0}
+      }
+    }
+  }
+}

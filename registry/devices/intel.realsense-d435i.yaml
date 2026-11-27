@@ -1,0 +1,44 @@
+schema_version: 1
+kind: device-profile
+id: intel.realsense-d435i
+display_name: Intel RealSense D435i
+category: sensor
+status: reference
+description: >
+  Front-mounted depth camera on the ArmPi Ultra. The deployed split mode uses
+  a UVC colour stream and a depth-only RealSense node, so colour and depth are
+  not aligned and do not share a timestamp. Single-owner access is required.
+profile_version: "0.1.0"
+vendor:
+  name: Intel
+  product: RealSense D435i
+  source: "Perception deployment notes and ADR 0004."
+  verification: unverified
+verification:
+  status: partially_verified
+  evidence:
+    - "https://github.com/JCHENG-Robotics/jcheng-perception/blob/main/docs/adr/0004-camera-device-ownership.md"
+    - "https://github.com/JCHENG-Robotics/jcheng-perception/blob/main/docs/CALIBRATION.md"
+  date: "2026-11-24"
+  notes: >
+    The device is present and used, but the current split deployment does not
+    publish aligned colour and depth. Intrinsics, depth noise and thermal
+    behaviour are not recorded as device-profile facts.
+hardware:
+  compute: "Raspberry Pi 5 (8 GB) through the vendor stack"
+  interfaces:
+    - usb
+sensor:
+  sensor_type: rgbd_camera
+  model: RealSense D435i
+  interface: usb
+  rate_hz: 8.0
+  source: "Learning adapter profile records a nominal 8 Hz external stream; the deployed split mode is not aligned."
+  verified: false
+capabilities:
+  - sensor.rgb_stream
+  - sensor.depth_stream
+notes: >
+  Only one process may own the camera. The colour and depth streams in the
+  deployed split mode are different sources; a pixel from one cannot be
+  back-projected with the other without an explicit alignment step.

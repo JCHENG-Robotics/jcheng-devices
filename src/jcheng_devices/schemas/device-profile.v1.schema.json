@@ -1,0 +1,267 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://jcheng-robotics.github.io/schemas/jcheng.device-profile.v1.schema.json",
+  "title": "JCHENG device profile v1",
+  "description": "Declarative description of one physical device. A profile is data: it never opens a device, joins a runtime graph or commands motion.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "kind",
+    "id",
+    "display_name",
+    "category",
+    "status",
+    "description",
+    "profile_version",
+    "vendor",
+    "verification",
+    "hardware",
+    "capabilities"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "kind": {"const": "device-profile"},
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*\\.[a-z0-9][a-z0-9-]*$",
+      "description": "Unique registry identifier: <vendor>.<slug>."
+    },
+    "display_name": {"type": "string", "minLength": 1, "maxLength": 120},
+    "category": {
+      "enum": ["arm", "mobile_base", "end_effector", "sensor", "teleop_device"]
+    },
+    "status": {
+      "enum": ["reference", "candidate", "planned"],
+      "description": "Registry role. reference = in use on a robot; candidate = under evaluation; planned = reserved, not connected."
+    },
+    "description": {"type": "string", "minLength": 10, "maxLength": 2000},
+    "profile_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "vendor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "product", "source", "verification"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "product": {"type": "string", "minLength": 1},
+        "url": {"type": "string", "format": "uri"},
+        "source": {"type": "string", "minLength": 1},
+        "verification": {"$ref": "#/$defs/verificationStatus"}
+      }
+    },
+    "verification": {"$ref": "#/$defs/verification"},
+    "hardware": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["interfaces"],
+      "properties": {
+        "compute": {"type": "string"},
+        "bus": {"type": "string"},
+        "interfaces": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "power": {"type": "string"},
+        "notes": {"type": "string"}
+      }
+    },
+    "kinematics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dof", "joints", "control_modes", "feedback", "workspace"],
+      "properties": {
+        "dof": {"type": "integer", "minimum": 1},
+        "joints": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/joint"}
+        },
+        "control_modes": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["position", "velocity", "torque", "mixed"]}
+        },
+        "feedback": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "workspace": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["description", "verified"],
+          "properties": {
+            "description": {"type": "string", "minLength": 1},
+            "verified": {"type": "boolean"},
+            "source": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    },
+    "chassis": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["drive_type", "wheel_count", "source", "verified"],
+      "properties": {
+        "drive_type": {"enum": ["differential", "mecanum", "omni", "ackermann", "tracked"]},
+        "wheel_count": {"type": "integer", "minimum": 1},
+        "max_linear_mps": {"type": "number", "exclusiveMinimum": 0},
+        "max_angular_rad_s": {"type": "number", "exclusiveMinimum": 0},
+        "source": {"type": "string", "minLength": 1},
+        "verified": {"type": "boolean"}
+      }
+    },
+    "end_effector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "source", "verified"],
+      "properties": {
+        "kind": {"enum": ["parallel_gripper", "angular_gripper", "suction", "magnetic", "other"]},
+        "stroke_mm": {"type": "number", "exclusiveMinimum": 0},
+        "canonical_range_rad": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"type": "number"}
+        },
+        "pulse_range": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["min", "max"],
+          "properties": {
+            "min": {"type": "integer"},
+            "max": {"type": "integer"}
+          }
+        },
+        "source": {"type": "string", "minLength": 1},
+        "verified": {"type": "boolean"}
+      }
+    },
+    "sensor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sensor_type", "model", "interface", "source", "verified"],
+      "properties": {
+        "sensor_type": {
+          "enum": ["rgb_camera", "depth_camera", "rgbd_camera", "lidar_2d", "lidar_3d", "imu", "force_torque", "other"]
+        },
+        "model": {"type": "string", "minLength": 1},
+        "interface": {"enum": ["usb", "serial", "ethernet", "csi", "i2c", "spi", "can", "other"]},
+        "rate_hz": {"type": "number", "exclusiveMinimum": 0},
+        "range_m": {
+          "type": "array",
+          "minItems": 2,
+          "maxItems": 2,
+          "items": {"type": "number", "minimum": 0}
+        },
+        "fov_deg": {"type": "number", "exclusiveMinimum": 0, "maximum": 360},
+        "source": {"type": "string", "minLength": 1},
+        "verified": {"type": "boolean"}
+      }
+    },
+    "teleop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["device_type", "interface", "source", "verified"],
+      "properties": {
+        "device_type": {"enum": ["gamepad", "spacemouse", "keyboard", "teach_pendant", "other"]},
+        "interface": {"enum": ["usb", "bluetooth", "serial", "ethernet", "other"]},
+        "source": {"type": "string", "minLength": 1},
+        "verified": {"type": "boolean"}
+      }
+    },
+    "assets": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "urdf": {"$ref": "#/$defs/relativePath"},
+        "xacro": {"$ref": "#/$defs/relativePath"},
+        "calibration": {"$ref": "#/$defs/relativePath"},
+        "simulation": {"$ref": "#/$defs/relativePath"}
+      }
+    },
+    "capabilities": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_]*$"
+      }
+    },
+    "notes": {"type": "string"}
+  },
+  "allOf": [
+    {
+      "if": {"required": ["category"], "properties": {"category": {"const": "arm"}}},
+      "then": {"required": ["kinematics"]}
+    },
+    {
+      "if": {"required": ["category"], "properties": {"category": {"const": "mobile_base"}}},
+      "then": {"required": ["chassis"]}
+    },
+    {
+      "if": {"required": ["category"], "properties": {"category": {"const": "end_effector"}}},
+      "then": {"required": ["end_effector"]}
+    },
+    {
+      "if": {"required": ["category"], "properties": {"category": {"const": "sensor"}}},
+      "then": {"required": ["sensor"]}
+    },
+    {
+      "if": {"required": ["category"], "properties": {"category": {"const": "teleop_device"}}},
+      "then": {"required": ["teleop"]}
+    }
+  ],
+  "$defs": {
+    "verificationStatus": {
+      "enum": ["verified", "partially_verified", "unverified"]
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "evidence", "date", "notes"],
+      "properties": {
+        "status": {"$ref": "#/$defs/verificationStatus"},
+        "evidence": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "date": {"type": "string", "pattern": "^([0-9]{4}-[0-9]{2}-[0-9]{2})?$"},
+        "notes": {"type": "string"}
+      }
+    },
+    "joint": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "role", "type", "limits", "source", "verified"],
+      "properties": {
+        "name": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_]*$"},
+        "role": {"type": "string", "minLength": 1},
+        "type": {"enum": ["revolute", "prismatic", "fixed"]},
+        "limits": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["min_deg", "max_deg"],
+          "properties": {
+            "min_deg": {"type": "number"},
+            "max_deg": {"type": "number"}
+          }
+        },
+        "max_velocity_deg_s": {"type": "number", "exclusiveMinimum": 0},
+        "feedback": {"type": "string", "minLength": 1},
+        "source": {"type": "string", "minLength": 1},
+        "verified": {"type": "boolean"}
+      }
+    },
+    "relativePath": {
+      "type": "string",
+      "pattern": "^(?!.*\\.\\.)(?!/)[A-Za-z0-9._/-]+$"
+    }
+  }
+}

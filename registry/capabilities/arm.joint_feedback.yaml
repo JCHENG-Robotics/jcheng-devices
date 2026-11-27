@@ -1,0 +1,35 @@
+schema_version: 1
+kind: capability-profile
+id: arm.joint_feedback
+display_name: Joint position feedback
+category: arm
+description: >
+  The arm reports measured joint positions over its bus. The feedback is the
+  only accepted position truth; a vendor joint-state stream is a command
+  cache and is explicitly not a measurement.
+parameters:
+  - name: joint_names
+    type: list
+    description: "Ordered joint names returned by the bus read."
+    required: true
+feedback:
+  - name: position_deg
+    type: list
+    unit: deg
+    description: "Measured joint positions in degrees."
+    rate_hz: 10.0
+  - name: read_age_ms
+    type: float
+    unit: ms
+    description: "Age of the last successful bus read; stale reads must be rejected."
+constraints:
+  - "A feedback sample without a fresh bus read is treated as missing, never as the last commanded value."
+  - "Bus reads have no safe timeout on this platform; a wedged reader requires restarting the owning process."
+  - "Raw pulse values remain a hardware mapping detail and do not enter cross-repository contracts."
+verification:
+  status: unverified
+  evidence: []
+  date: ""
+  notes: >
+    The feedback path is documented and exercised by supervised system tests,
+    but no device profile consumer exists in v0.1.0.

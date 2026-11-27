@@ -1,0 +1,52 @@
+schema_version: 1
+kind: capability-profile
+id: sensor.laserscan
+display_name: Two-dimensional laser scan
+category: sensor
+description: >
+  A planar LiDAR delivers one scan per revolution with a range array, an
+  angular convention and a scan frame. The profile is a device description;
+  the driver and the frame tree stay outside this repository.
+parameters:
+  - name: points
+    type: int
+    description: "Samples per revolution."
+    required: true
+  - name: range_min_m
+    type: float
+    unit: m
+    description: "Minimum valid range."
+    required: true
+  - name: range_max_m
+    type: float
+    unit: m
+    description: "Maximum valid range."
+    required: true
+  - name: angle_min_rad
+    type: float
+    unit: rad
+    description: "First sample angle."
+    required: true
+  - name: angle_max_rad
+    type: float
+    unit: rad
+    description: "Last sample angle."
+    required: true
+feedback:
+  - name: scan_timestamp
+    type: string
+    description: "Scan acquisition time."
+  - name: frame_id
+    type: string
+    description: "Laser frame the scan is expressed in."
+constraints:
+  - "A scan is advisory sensor data; it never becomes a velocity command in this repository."
+  - "Range and field of view must be measured on the instance before a device is marked verified."
+  - "No driver, udev rule or device node is owned here."
+verification:
+  status: unverified
+  evidence: []
+  date: ""
+  notes: >
+    The reference LiDAR is not connected; its profile is a planned interface
+    envelope only.

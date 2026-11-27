@@ -1,0 +1,40 @@
+schema_version: 1
+kind: device-profile
+id: hiwonder.armpi-ultra-chassis
+display_name: ArmPi Ultra mecanum chassis
+category: mobile_base
+status: reference
+description: >
+  Four-wheel mecanum chassis that carries the ArmPi Ultra arm. The mobile
+  capability publishes bounded chassis intent; this profile describes the
+  platform only and owns no control path.
+profile_version: "0.1.0"
+vendor:
+  name: Hiwonder
+  product: ArmPi Ultra chassis
+  source: "Vendor runtime image and the jcheng-mobile integration contract."
+  verification: unverified
+verification:
+  status: unverified
+  evidence: []
+  date: ""
+  notes: >
+    Wheel geometry, mass, encoder resolution and measured speed limits are not
+    documented in this repository. The 0.20 m/s value is a capability intent
+    limit from jcheng-mobile, not a measurement of the chassis.
+hardware:
+  compute: "Shared Raspberry Pi 5 (8 GB)"
+  bus: "Vendor motor controller"
+  interfaces:
+    - "vendor motor controller"
+chassis:
+  drive_type: mecanum
+  wheel_count: 4
+  max_linear_mps: 0.20
+  source: "0.20 m/s is the jcheng-mobile lateral intent limit, not a measured chassis limit."
+  verified: false
+capabilities:
+  - base.velocity_intent
+notes: >
+  No encoder model, wheel radius, wheelbase or payload figure is stated until
+  a source is recorded. Unverified parameters stay absent rather than guessed.

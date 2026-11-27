@@ -1,0 +1,36 @@
+schema_version: 1
+kind: capability-profile
+id: end_effector.position_control
+display_name: Gripper position control
+category: end_effector
+description: >
+  A single-actuator gripper can be driven between a closed and an open
+  position. The platform exposes no force or torque limit, so contact and
+  stall behaviour must be handled by the execution layer.
+parameters:
+  - name: target_rad
+    type: float
+    unit: rad
+    description: "Canonical gripper position; 0.0 is closed and the device profile states the open bound."
+    required: true
+  - name: duration_s
+    type: duration
+    unit: s
+    description: "Optional requested motion duration."
+    required: false
+feedback:
+  - name: position_rad
+    type: float
+    unit: rad
+    description: "Measured gripper position mapped to the canonical range."
+constraints:
+  - "No force, current or torque limit exists; closing on an object stalls the servo."
+  - "Completion is judged by direction and minimum displacement, not by an exact target."
+  - "The raw pulse range stays in the hardware adapter and never becomes a contract."
+verification:
+  status: unverified
+  evidence: []
+  date: ""
+  notes: >
+    No runtime consumer exists in v0.1.0. Reaching behaviour depends on the
+    object and is not characterised.

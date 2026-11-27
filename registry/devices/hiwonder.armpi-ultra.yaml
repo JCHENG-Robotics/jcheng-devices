@@ -1,0 +1,82 @@
+schema_version: 1
+kind: device-profile
+id: hiwonder.armpi-ultra
+display_name: ArmPi Ultra arm
+category: arm
+status: reference
+description: >
+  Five-degree-of-freedom bus-servo arm on the ArmPi Ultra platform. Position
+  commands and bus position feedback only; the vendor joint-state topic is a
+  command cache, not a measurement. The arm is the first reference device of
+  the ecosystem and is described here for planning, simulation configuration
+  and capability matching, not to expose an execution surface.
+profile_version: "0.1.0"
+vendor:
+  name: Hiwonder
+  product: ArmPi Ultra
+  source: "Vendor runtime image armpi-ultra:flatten-20261125 and the read-only vendor tree on the robot."
+  verification: unverified
+verification:
+  status: partially_verified
+  evidence:
+    - "https://github.com/JCHENG-Robotics/jcheng-system/blob/main/deploy/armpi-ultra/docs/ACCEPTANCE-20261125.md"
+    - "https://github.com/JCHENG-Robotics/jcheng-system/blob/main/docs/SAFETY.md"
+  date: "2026-11-25"
+  notes: >
+    Device identity, bus servo IDs and the measured-feedback path are
+    supported by supervised system tests. Payload, repeatability, absolute
+    accuracy and the workspace envelope are not measured and are not stated.
+hardware:
+  compute: "Raspberry Pi 5 (8 GB), ROS 2 Humble vendor stack"
+  bus: "Serial bus servos, servo IDs 1-6 strictly increasing"
+  interfaces:
+    - "bus servo controller"
+kinematics:
+  dof: 5
+  control_modes:
+    - position
+  feedback:
+    - "bus position read (GetBusServoState)"
+    - "no command-cache position is treated as measurement"
+  workspace:
+    description: "No workspace envelope is claimed; it has not been measured."
+    verified: false
+    source: "No measurement recorded in this repository."
+  joints:
+    - name: joint1
+      role: shoulder_pan
+      type: revolute
+      limits: {min_deg: -103.2, max_deg: 103.2}
+      source: "Learning adapter profile, rad limits converted (1.8012 rad)."
+      verified: false
+    - name: joint2
+      role: shoulder_lift
+      type: revolute
+      limits: {min_deg: -37.9, max_deg: 66.0}
+      source: "Learning adapter profile, rad limits converted (-0.6618..1.1519 rad)."
+      verified: false
+    - name: joint3
+      role: elbow
+      type: revolute
+      limits: {min_deg: -103.2, max_deg: 0.0}
+      source: "Learning adapter profile, rad limits converted (-1.8012..0 rad)."
+      verified: false
+    - name: joint4
+      role: wrist_pitch
+      type: revolute
+      limits: {min_deg: -91.2, max_deg: 91.2}
+      source: "Learning adapter profile, rad limits converted (1.5917 rad)."
+      verified: false
+    - name: joint5
+      role: wrist_roll
+      type: revolute
+      limits: {min_deg: -91.2, max_deg: 88.8}
+      source: "Learning adapter profile, rad limits converted (-1.5917..1.5499 rad)."
+      verified: false
+capabilities:
+  - arm.position_control
+  - arm.joint_feedback
+notes: >
+  The gripper is registered separately as hiwonder.armpi-ultra-gripper. The
+  chassis is registered as hiwonder.armpi-ultra-chassis. No raw pulse value is
+  an ecosystem contract: radians are the only joint unit in profiles.
