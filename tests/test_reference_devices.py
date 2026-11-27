@@ -55,6 +55,24 @@ def test_armpi_ultra_joint_limits_match_the_learning_adapter():
         assert joint["verified"] is False
 
 
+def test_armpi_profile_defers_runtime_authority_to_the_system_profile():
+    profile = _profile("hiwonder.armpi-ultra")
+    for joint in profile["kinematics"]["joints"]:
+        assert "system robot profile" in joint["source"].lower()
+    assert "runtime authority" in profile["verification"]["notes"].lower()
+    assert any(
+        "configs/robots/armpi_ultra/profile.yaml" in link
+        for link in profile["verification"]["evidence"]
+    )
+
+
+def test_piper_profile_cites_the_simulation_only_system_profile():
+    profile = _profile("agilex.piper-x")
+    assert "simulation-only" in profile["vendor"]["source"].lower()
+    for joint in profile["kinematics"]["joints"]:
+        assert "simulation-only robot profile" in joint["source"].lower()
+
+
 def test_armpi_bus_ids_are_recorded_without_a_pulse_contract():
     profile = _profile("hiwonder.armpi-ultra")
     assert "1-6" in profile["hardware"]["bus"]

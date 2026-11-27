@@ -111,7 +111,36 @@ it is not prose.
 7. `profile_version` is semantic;
 8. descriptions and verification notes are non-empty where required.
 
-## 6. Schema change policy
+## 6. Relationship to `robot-profile.v1`
+
+`jcheng-interfaces` already owns `robot-profile.v1`, and `jcheng-system` keeps
+one instance per robot in `configs/robots/<robot>/profile.yaml`. The two
+profile kinds answer different questions and must not be merged:
+
+| Question | `robot-profile.v1` (interfaces + system) | `device-profile.v1` (this repository) |
+|---|---|---|
+| What is it for? | deploy and run one robot instance | describe a device model and its capabilities |
+| Owner | system layer and deployment | device library |
+| Joint limits | authoritative runtime values in radians | catalog values in degrees, cited from the system profile |
+| Servo mapping, direction, measured pulses | present | absent |
+| Workspace, table plane, named motion profiles | present | workspace only as an unmeasured description |
+| Capabilities and verification | not described | required |
+| Consumers | safety, MoveIt, gateway, arbitration | planning, capability matching, simulation configuration |
+
+Rules:
+
+- The system robot profile remains the **runtime authority** for a deployed
+  robot. A device profile never replaces it and is never copied into runtime
+  configuration.
+- Overlapping values (joint names and ranges) must be reconciled, not
+  duplicated silently. M2 adds a compatibility check that fails on a mismatch.
+- Fields that only make sense for an instance (servo id, direction, measured
+  pulses, table plane, motion profiles, source hashes) stay out of a device
+  profile.
+- Fields that describe a device model (vendor, category, joint roles,
+  capabilities, verification) stay out of the system robot profile.
+
+## 7. Schema change policy
 
 - Additive, backward-compatible fields may land in `v1` with a
   `profile_version` bump.
@@ -121,7 +150,7 @@ it is not prose.
   a schema review and a versioned tag. Until then, no other repository may
   depend on these files as a contract.
 
-## 7. Related
+## 8. Related
 
 - [README](../README.md)
 - [Device registry rules](DEVICE_REGISTRY.md)

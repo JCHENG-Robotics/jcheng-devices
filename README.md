@@ -47,6 +47,11 @@ What it deliberately does not do:
 - It does not guess an unverified parameter. Unverified values are marked, or
   absent.
 
+Device profiles describe device models and capabilities. The per-robot
+`robot-profile.v1` in `jcheng-system` remains the runtime authority for servo
+mapping, joint limits, workspace and table plane; this repository never
+replaces or exports runtime configuration.
+
 ## Repository layout
 
 ```text

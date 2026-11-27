@@ -21,11 +21,14 @@ verification:
   evidence:
     - "https://github.com/JCHENG-Robotics/jcheng-system/blob/main/deploy/armpi-ultra/docs/ACCEPTANCE-20261125.md"
     - "https://github.com/JCHENG-Robotics/jcheng-system/blob/main/docs/SAFETY.md"
+    - "https://github.com/JCHENG-Robotics/jcheng-system/blob/main/configs/robots/armpi_ultra/profile.yaml"
   date: "2026-11-25"
   notes: >
     Device identity, bus servo IDs and the measured-feedback path are
-    supported by supervised system tests. Payload, repeatability, absolute
-    accuracy and the workspace envelope are not measured and are not stated.
+    supported by supervised system tests. Joint ranges are converted from the
+    system robot profile, which remains the runtime authority for this robot.
+    Payload, repeatability, absolute accuracy and the workspace envelope are
+    not measured and are not stated.
 hardware:
   compute: "Raspberry Pi 5 (8 GB), ROS 2 Humble vendor stack"
   bus: "Serial bus servos, servo IDs 1-6 strictly increasing"
@@ -47,31 +50,31 @@ kinematics:
       role: shoulder_pan
       type: revolute
       limits: {min_deg: -103.2, max_deg: 103.2}
-      source: "Learning adapter profile, rad limits converted (1.8012 rad)."
+      source: "System robot profile, rad limits converted (1.8012 rad)."
       verified: false
     - name: joint2
       role: shoulder_lift
       type: revolute
       limits: {min_deg: -37.9, max_deg: 66.0}
-      source: "Learning adapter profile, rad limits converted (-0.6618..1.1519 rad)."
+      source: "System robot profile, rad limits converted (-0.6618..1.1519 rad)."
       verified: false
     - name: joint3
       role: elbow
       type: revolute
       limits: {min_deg: -103.2, max_deg: 0.0}
-      source: "Learning adapter profile, rad limits converted (-1.8012..0 rad)."
+      source: "System robot profile, rad limits converted (-1.8012..0 rad)."
       verified: false
     - name: joint4
       role: wrist_pitch
       type: revolute
       limits: {min_deg: -91.2, max_deg: 91.2}
-      source: "Learning adapter profile, rad limits converted (1.5917 rad)."
+      source: "System robot profile, rad limits converted (1.5917 rad)."
       verified: false
     - name: joint5
       role: wrist_roll
       type: revolute
       limits: {min_deg: -91.2, max_deg: 88.8}
-      source: "Learning adapter profile, rad limits converted (-1.5917..1.5499 rad)."
+      source: "System robot profile, rad limits converted (-1.5917..1.5499 rad)."
       verified: false
 capabilities:
   - arm.position_control
