@@ -8,7 +8,9 @@ All notable changes to this project are documented here. Format based on
 
 ### Added
 
-- Nothing yet.
+- `SCHEMA_OWNERSHIP.md`: both repository-local Schemas now declare their owner,
+  version, status (`repo-local`), consumers and promotion trigger. The contract
+  test fails when a Schema file is not declared.
 
 ### Changed
 

@@ -52,6 +52,7 @@ jcheng-devices/
 ├── VERSION
 ├── README.md / README.zh-CN.md
 ├── ROADMAP.md / CHANGELOG.md / ACCEPTANCE.md
+├── SCHEMA_OWNERSHIP.md        # Schema 归属、状态、消费方与提升触发条件
 ├── registry/
 │   ├── registry.yaml          # 显式索引
 │   ├── devices/               # 六个设备描述文件
@@ -117,7 +118,7 @@ bash scripts/check_repo_gate.sh
 - [`jcheng-mobile`](https://github.com/JCHENG-Robotics/jcheng-mobile) — 底盘意图与激光雷达接口预期。
 - [`jcheng-teleop`](https://github.com/JCHENG-Robotics/jcheng-teleop) — 遥操作设备类别的未来使用方。
 - [`jcheng-ops`](https://github.com/JCHENG-Robotics/jcheng-ops) — 无人值守巡检与看门狗。
-- [`.github`](https://github.com/JCHENG-Robotics/.github) — 分类、文档标准与生态路线图。
+- [`.github`](https://github.com/JCHENG-Robotics/.github) — 分类、文档标准、生态路线图与[职责边界规范](https://github.com/JCHENG-Robotics/.github/blob/main/docs/repo-boundaries.md)。
 
 ## 许可
 

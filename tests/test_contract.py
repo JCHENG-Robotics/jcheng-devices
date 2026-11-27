@@ -101,6 +101,7 @@ def test_document_set_exists():
         "ACCEPTANCE.md",
         "LICENSE-REVIEW.md",
         "VERSION",
+        "SCHEMA_OWNERSHIP.md",
         "capability.yaml",
         "pyproject.toml",
         "registry/registry.yaml",
@@ -121,6 +122,28 @@ def test_document_set_exists():
         "evidence/20261127_scaffold/README.md",
     ):
         assert (ROOT / name).is_file(), f"missing {name}"
+
+
+def test_every_schema_is_declared_in_schema_ownership():
+    files = {
+        f"src/jcheng_devices/schemas/{path.name}"
+        for path in (ROOT / "src" / "jcheng_devices" / "schemas").glob("*.schema.json")
+    }
+    text = (ROOT / "SCHEMA_OWNERSHIP.md").read_text(encoding="utf-8")
+    declared = set(
+        re.findall(
+            r"\| `(src/jcheng_devices/schemas/[^`]+\.schema\.json)` \|", text
+        )
+    )
+    assert declared == files, {
+        "undeclared": sorted(files - declared),
+        "missing": sorted(declared - files),
+    }
+    for line in text.splitlines():
+        if "| `src/jcheng_devices/schemas/" not in line:
+            continue
+        assert "`repo-local`" in line, line
+        assert "none;" in line, line
 
 
 def test_readme_required_sections():
