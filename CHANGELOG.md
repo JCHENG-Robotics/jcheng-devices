@@ -8,7 +8,10 @@ All notable changes to this project are documented here. Format based on
 
 ### Added
 
-- `rokae.ar5`: planned registration with vendor-public facts (AR5, 7 DOF,
+- `rokae.ar5l` / `rokae.ar5r`: separate left/right AR5 unit placeholders
+  (`data_status: missing`); the owner's physical system is an AR5 dual-arm
+  pair. Variant-specific kinematics are not invented.
+- `rokae.ar5`: family-level registration with vendor-public facts (AR5, 7 DOF,
   5 kg payload, 683 mm radius, EtherCAT, published joint ranges; official page
   accessed 2026-11-28) and `data_status: partial`. No local SDK, URDF,
   calibration or measured unit exists; limits remain unverified and the profile

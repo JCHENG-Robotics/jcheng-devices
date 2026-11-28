@@ -53,33 +53,37 @@
 | License | Mixed MIT/LGPL; do not bulk-copy LGPL code into the repo; keep notices and use an external cache |
 | Verification | **Unverified on hardware**; joint limits cross-checked between MIT URDF and official SDK, but no unit was present |
 
-## 4. Rokae AR5 (7-DoF, planned, vendor-public facts)
+## 4. Rokae AR5 family + AR5L / AR5R variants (7-DoF, planned)
 
 | Field | Value |
 |---|---|
-| Model ID | `rokae.ar5` |
-| Vendor / product | Rokae / AR5 |
+| Family ID | `rokae.ar5` (family reference only; not a physical unit) |
+| Unit model IDs | `rokae.ar5l` (left), `rokae.ar5r` (right) |
+| Vendor / product | Rokae / AR5 family; AR5L left, AR5R right |
 | Official source | <https://www.rokae.com/en/product/show/595/> (accessed 2026-11-28) |
 | DOF | 7 (vendor-public; previous owner statement consistent) |
 | Vendor-public facts | 7 DOF; 5 kg rated payload; 683 mm operating radius; EtherCAT; joint torque sensors standard; published joint ranges (axis1 ±178°, axis2 ±120°, axis3 ±178°, axis4 -60…145°, axis5 ±178°, axis6 ±60°, axis7 ±90°) |
-| Status | **planned / `data_status: partial`**; registration only |
-| Device profile | `<workspace>/jcheng-devices/registry/devices/rokae.ar5.yaml` (public; vendor-public facts, unverified locally) |
+| Status | Family: planned / `data_status: partial`; units: planned / `data_status: missing` |
+| Device profiles | `rokae.ar5.yaml` (family facts), `rokae.ar5l.yaml`, `rokae.ar5r.yaml` (unit placeholders) |
+| Unit source | ROKAE ROS 2 manual confirms AR5L/AR5R model identifiers and dual-arm context |
 | SDK / URDF / control adapter | **not found** in the scanned workspace |
 | Calibration / data | **not found** |
 | Local mention | A WeChat training note references a `rokae_1119` dataset; it is not a device asset and was not copied |
 | License | Product-page facts are cited, not copied; no vendor SDK/URDF/manual is present or committed |
 | Verification | **Unverified on hardware**; joint signs, velocity, acceleration, payload at reach, repeatability and the ecosystem control interface are not locally verified |
 
-Do not plan, limit-check or deploy an AR5 from this profile until vendor
-documentation, SDK/URDF and a real unit/instance record exist.
+The owner's physical system is a dual-arm pair: left `AR5L`, right `AR5R`.
+Variant-specific mirroring, joint signs, limits, SDK/URDF, calibration and
+instance records are absent. Do not plan, limit-check or deploy either unit
+from these profiles. The family profile is not a substitute for a unit.
 
 ## 5. Cross-device facts
 
 | Attribute | ArmPi Ultra | PiPER X | AR5 |
 |---|---|---|---|
-| DOF | 5 + gripper | 6 + prismatic gripper | 7 (vendor-public) |
+| DOF | 5 + gripper | 6 + prismatic gripper | 7 (family vendor-public; AR5L/AR5R units) |
 | Interface | vendor bus servos | CAN 1 Mbps (declared) | EtherCAT (vendor-public; no local adapter) |
-| Runtime adapter | system vendor bridge (existing) | none | none |
+| Runtime adapter | system vendor bridge (existing) | none | none; two unit variants L/R |
 | Full reference integration | **yes** | no | no |
 | Public assets committed | declarative profiles only | declarative profiles only | declarative profile with vendor-public facts |
 | Private assets | vendor tree, manuals, calibration | external cache, vendor repos | none found |

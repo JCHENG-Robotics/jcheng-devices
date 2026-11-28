@@ -17,6 +17,10 @@ devices:
     path: devices/agilex.piper-x.yaml
   - id: rokae.ar5
     path: devices/rokae.ar5.yaml
+  - id: rokae.ar5l
+    path: devices/rokae.ar5l.yaml
+  - id: rokae.ar5r
+    path: devices/rokae.ar5r.yaml
 capabilities:
   - id: arm.position_control
     path: capabilities/arm.position_control.yaml
