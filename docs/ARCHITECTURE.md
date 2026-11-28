@@ -74,7 +74,8 @@ vendor packages or the network.
    An absent value is preferable to a guessed one.
 5. **Descriptions are not authority.** A capability profile states what a
    device can do. It defines no command channel, no lease and no execution
-   path.
+   path. The system `robot-profile.v1` remains the runtime authority for a
+   deployed robot; a device profile never replaces it.
 6. **Deterministic output.** JSON output and the registry digest are sorted and
    independent of file order, so CI can compare bytes.
 

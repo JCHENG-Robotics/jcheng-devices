@@ -8,8 +8,8 @@
 
 | Repository | Relationship | Allowed | Forbidden |
 |---|---|---|---|
-| `jcheng-interfaces` | contract source | pin version and hash; propose schemas | redefining the contract here |
-| `jcheng-system` | hardware and motion owner | supply profile data for planning or configuration | opening a device, publishing motion, holding a lease |
+| `jcheng-interfaces` | contract source | pin version and hash; propose schemas; `robot-profile.v1` stays the deployment contract | redefining a contract or the robot profile here |
+| `jcheng-system` | hardware and motion owner; robot-profile runtime authority | cite or compare profile data | opening a device, publishing motion, holding a lease, replacing `robot-profile.v1` |
 | `jcheng-simulation` | future consumer | read profiles to build the domain-43 plant | joining domains 0/41/42, driving hardware |
 | `jcheng-learning` | description overlap | reference device identity | replacing robot-adapter profiles or duplicating datasets |
 | `jcheng-perception` | evidence source | cite camera deployment and calibration evidence | opening a camera or redefining calibration |
@@ -44,6 +44,19 @@ become contracts only through a reviewed proposal:
 
 Until then, no other repository may parse or depend on these files as a
 contract. Citing a profile in documentation is not a contract dependency.
+
+### 3.1 Deployment profile versus device profile
+
+`jcheng-system` keeps one `robot-profile.v1` instance per robot in
+`configs/robots/<robot>/profile.yaml` (servo ids, radians, direction, measured
+pulses, workspace, table plane, motion profiles). That file is the runtime
+authority for a deployed robot.
+
+A device profile describes the device model and its capabilities for planning,
+capability matching and simulation configuration. It never replaces the system
+profile and is never exported as runtime configuration. Overlapping joint
+ranges are reconciled by the M2 compatibility check; a mismatch is an error,
+not a silent preference.
 
 ## 4. Future adapter boundary (v0.3.x)
 

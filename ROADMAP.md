@@ -27,7 +27,7 @@
 |---|---|---|---|---|
 | M0 | Admission: L3 device library, offline boundary, taxonomy entry | Complete (2026-11-27) | Boundary approved with `hardware_access: none` and an empty runtime surface | `capability.yaml`; `.github/docs/repo-taxonomy.md` |
 | M1 | Device registry, description, capability model and offline validation (v0.1.x) | Complete (2026-11-27) | Registry validates; schemas, CLI, tests, CI and reference profiles exist | [evidence/20261127_scaffold/](evidence/20261127_scaffold/README.md) |
-| M2 | Multi-device description specification, capability matching and compatibility validation (v0.2.x) | Planned | A compatibility matrix rejects category, range and capability mismatches deterministically; at least two arm vendors validate | — |
+| M2 | Multi-device description specification, capability matching and compatibility validation (v0.2.x) | Planned | A compatibility matrix rejects category, range and capability mismatches deterministically, reconciles joint overlap with the system `robot-profile.v1`, and passes for at least two arm vendors | — |
 | M3 | Device adapter contract design and mock implementation (v0.3.x) | Planned | Adapter protocol reviewed and merged in `jcheng-interfaces`; an in-memory mock passes contract tests; no device access | — |
 | M4 | Controlled integration with `jcheng-system` and `jcheng-simulation` (v0.4.x) | Planned | Profiles drive a simulated plant on domain 43 and a plan-only system path under a reviewed contract; no independent control channel | — |
 | M5 | Cross-device task transfer and real-robot adaptation validation (v0.5.x) | Planned | One task recipe transfers between two device profiles with recorded, supervised evidence; failures stay failed | — |

@@ -13,16 +13,17 @@ profile_version: "0.1.0"
 vendor:
   name: AgileX
   product: PiPER X
-  source: "jcheng-learning adapter profile; vendor datasheet review pending."
+  source: "jcheng-system simulation-only robot profile; vendor datasheet review pending."
   verification: unverified
 verification:
   status: unverified
   evidence: []
   date: ""
   notes: >
-    No PiPER X hardware is present in this workspace. Joint limits, velocity,
-    payload and bus configuration must be reviewed against the vendor datasheet
-    before the status moves to reference.
+    The system robot profile is simulation-only and carries no servo IDs,
+    workspace or table plane. No PiPER X hardware is present in this workspace.
+    Joint limits, velocity, payload and bus configuration must be reviewed
+    against the vendor datasheet before the status moves to reference.
 hardware:
   interfaces:
     - "not recorded; datasheet review pending"
@@ -41,37 +42,37 @@ kinematics:
       role: joint1
       type: revolute
       limits: {min_deg: -150.0, max_deg: 150.0}
-      source: "Learning adapter profile, rad limits converted (-2.6179938..2.6179938 rad)."
+      source: "System simulation-only robot profile, rad limits converted (-2.6179938..2.6179938 rad)."
       verified: false
     - name: joint2
       role: joint2
       type: revolute
       limits: {min_deg: 0.0, max_deg: 180.0}
-      source: "Learning adapter profile, rad limits converted (0..3.1415926 rad)."
+      source: "System simulation-only robot profile, rad limits converted (0..3.1415926 rad)."
       verified: false
     - name: joint3
       role: joint3
       type: revolute
       limits: {min_deg: -170.0, max_deg: 0.0}
-      source: "Learning adapter profile, rad limits converted (-2.9670597..0 rad)."
+      source: "System simulation-only robot profile, rad limits converted (-2.9670597..0 rad)."
       verified: false
     - name: joint4
       role: joint4
       type: revolute
       limits: {min_deg: -89.0, max_deg: 89.0}
-      source: "Learning adapter profile, rad limits converted (-1.553343..1.553343 rad)."
+      source: "System simulation-only robot profile, rad limits converted (-1.553343..1.553343 rad)."
       verified: false
     - name: joint5
       role: joint5
       type: revolute
       limits: {min_deg: -89.0, max_deg: 89.0}
-      source: "Learning adapter profile, rad limits converted (-1.553343..1.553343 rad)."
+      source: "System simulation-only robot profile, rad limits converted (-1.553343..1.553343 rad)."
       verified: false
     - name: joint6
       role: joint6
       type: revolute
       limits: {min_deg: -165.0, max_deg: 165.0}
-      source: "Learning adapter profile, rad limits converted (-2.88..2.88 rad)."
+      source: "System simulation-only robot profile, rad limits converted (-2.88..2.88 rad)."
       verified: false
 capabilities:
   - arm.position_control

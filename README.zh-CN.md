@@ -40,6 +40,10 @@ v0.1.0 提供：
 - 不复制厂商代码、厂商网格模型或实测数据。
 - 不猜测未验证参数。未验证的值要么明确标记，要么不写入。
 
+设备描述只描述设备型号与能力。`jcheng-system` 中每台机器人的
+`robot-profile.v1` 仍是伺服映射、关节限位、工作空间与工作台平面的运行时权威；
+本仓库不替代、也不导出运行时配置。
+
 ## 仓库结构
 
 ```text
@@ -48,6 +52,7 @@ jcheng-devices/
 ├── VERSION
 ├── README.md / README.zh-CN.md
 ├── ROADMAP.md / CHANGELOG.md / ACCEPTANCE.md
+├── SCHEMA_OWNERSHIP.md        # Schema 归属、状态、消费方与提升触发条件
 ├── registry/
 │   ├── registry.yaml          # 显式索引
 │   ├── devices/               # 六个设备描述文件
@@ -113,7 +118,7 @@ bash scripts/check_repo_gate.sh
 - [`jcheng-mobile`](https://github.com/JCHENG-Robotics/jcheng-mobile) — 底盘意图与激光雷达接口预期。
 - [`jcheng-teleop`](https://github.com/JCHENG-Robotics/jcheng-teleop) — 遥操作设备类别的未来使用方。
 - [`jcheng-ops`](https://github.com/JCHENG-Robotics/jcheng-ops) — 无人值守巡检与看门狗。
-- [`.github`](https://github.com/JCHENG-Robotics/.github) — 分类、文档标准与生态路线图。
+- [`.github`](https://github.com/JCHENG-Robotics/.github) — 分类、文档标准、生态路线图与[职责边界规范](https://github.com/JCHENG-Robotics/.github/blob/main/docs/repo-boundaries.md)。
 
 ## 许可
 

@@ -47,6 +47,11 @@ What it deliberately does not do:
 - It does not guess an unverified parameter. Unverified values are marked, or
   absent.
 
+Device profiles describe device models and capabilities. The per-robot
+`robot-profile.v1` in `jcheng-system` remains the runtime authority for servo
+mapping, joint limits, workspace and table plane; this repository never
+replaces or exports runtime configuration.
+
 ## Repository layout
 
 ```text
@@ -55,6 +60,7 @@ jcheng-devices/
 ├── VERSION
 ├── README.md / README.zh-CN.md
 ├── ROADMAP.md / CHANGELOG.md / ACCEPTANCE.md
+├── SCHEMA_OWNERSHIP.md        # schema owner, status, consumers, promotion triggers
 ├── registry/
 │   ├── registry.yaml          # explicit index
 │   ├── devices/               # six device profiles
@@ -121,7 +127,7 @@ Full report: [ACCEPTANCE.md](ACCEPTANCE.md).
 - [`jcheng-mobile`](https://github.com/JCHENG-Robotics/jcheng-mobile) — chassis intent and LiDAR interface expectations.
 - [`jcheng-teleop`](https://github.com/JCHENG-Robotics/jcheng-teleop) — future teleoperation-device category consumer.
 - [`jcheng-ops`](https://github.com/JCHENG-Robotics/jcheng-ops) — unattended health and watchdogs.
-- [`.github`](https://github.com/JCHENG-Robotics/.github) — taxonomy, documentation standard and ecosystem roadmap.
+- [`.github`](https://github.com/JCHENG-Robotics/.github) — taxonomy, documentation standard, ecosystem roadmap and the [boundary specification](https://github.com/JCHENG-Robotics/.github/blob/main/docs/repo-boundaries.md).
 
 ## License
 

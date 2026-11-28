@@ -8,7 +8,16 @@ All notable changes to this project are documented here. Format based on
 
 ### Added
 
-- Nothing yet.
+- `SCHEMA_OWNERSHIP.md`: both repository-local Schemas now declare their owner,
+  version, status (`repo-local`), consumers and promotion trigger. The contract
+  test fails when a Schema file is not declared.
+
+### Changed
+
+- Cite the `jcheng-system` per-robot `robot-profile.v1` instances as the
+  source of joint ranges and state explicitly that they remain the runtime
+  authority. Device profiles describe models and capabilities; they never
+  replace or export runtime configuration.
 
 ## [0.1.0] — 2026-11-27
 

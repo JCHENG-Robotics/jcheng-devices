@@ -18,7 +18,7 @@ verification:
   status: partially_verified
   evidence:
     - "https://github.com/JCHENG-Robotics/jcheng-system/blob/main/docs/ACCEPTANCE.md"
-    - "https://github.com/JCHENG-Robotics/jcheng-learning/blob/main/src/jcheng_learning/profiles/armpi_ultra.yaml"
+    - "https://github.com/JCHENG-Robotics/jcheng-system/blob/main/configs/robots/armpi_ultra/profile.yaml"
   date: "2026-11-25"
   notes: >
     The observed reachable pulse range (about 183-645) is narrower than the
@@ -32,7 +32,7 @@ end_effector:
   kind: angular_gripper
   canonical_range_rad: [0.0, 2.22]
   pulse_range: {min: 170, max: 700}
-  source: "Canonical range from the learning adapter profile; nominal pulse range from the vendor mapping. Observed reachable range is narrower."
+  source: "Canonical range and nominal pulses from the system robot profile; observed reachable range is narrower."
   verified: false
 capabilities:
   - end_effector.position_control
