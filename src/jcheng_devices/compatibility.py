@@ -15,7 +15,7 @@ from typing import Any, Final
 from .errors import Issue
 from .hashing import normalize_content_hash
 from .loading import load_yaml
-from .snapshot import CAPABILITY_ID_RE, PARAMETER_TYPES, SNAPSHOT_SCHEMA
+from .snapshot import CAPABILITY_ID_RE, PARAMETER_TYPES, SNAPSHOT_SCHEMA, validate_snapshot
 
 REQUIREMENTS_SCHEMA: Final = "jcheng.device_requirements.v1"
 REPORT_SCHEMA: Final = "jcheng.device_compatibility.v1"
@@ -24,7 +24,7 @@ REQUIREMENT_FIELDS: Final = (
     "schema",
     "device",
     "device_version",
-    "content_hash",
+    "source_hash",
     "capabilities",
     "notes",
 )
@@ -59,7 +59,7 @@ class CompatibilityReport:
 
     device: str
     device_version: str
-    content_hash: str
+    source_hash: str
     ok: bool
     deployable: bool
     errors: tuple[Issue, ...] = ()
@@ -71,7 +71,7 @@ class CompatibilityReport:
             "schema": REPORT_SCHEMA,
             "device": self.device,
             "device_version": self.device_version,
-            "content_hash": self.content_hash,
+            "source_hash": self.source_hash,
             "ok": self.ok,
             "deployable": self.deployable,
             "errors": [issue.as_dict() for issue in self.errors],
@@ -114,10 +114,11 @@ def match(
 
     errors: list[Issue] = []
     warnings: list[Issue] = []
+    errors.extend(validate_snapshot(snapshot))
 
-    device, device_version, content_hash = _snapshot_identity(snapshot, errors)
+    device, device_version, source_hash = _snapshot_identity(snapshot, errors)
     requirement_rows = _parse_requirements(requirements, errors)
-    _check_pins(requirements, device, device_version, content_hash, errors)
+    _check_pins(requirements, device, device_version, source_hash, errors)
 
     snapshot_capabilities = _snapshot_capability_map(snapshot, errors)
     matches: list[CapabilityMatch] = []
@@ -209,7 +210,7 @@ def match(
     return CompatibilityReport(
         device=device,
         device_version=device_version,
-        content_hash=content_hash,
+        source_hash=source_hash,
         ok=not errors,
         deployable=deployable,
         errors=tuple(errors),
@@ -251,14 +252,14 @@ def _parse_requirements(
             errors.append(
                 Issue("INVALID_REQUIREMENTS", f"{field} must be a string", field)
             )
-    if "content_hash" in requirements:
-        digest = requirements["content_hash"]
+    if "source_hash" in requirements:
+        digest = requirements["source_hash"]
         if not isinstance(digest, str) or normalize_content_hash(digest) is None:
             errors.append(
                 Issue(
                     "INVALID_REQUIREMENTS",
-                    "content_hash must be sha256:<64 hex digits>",
-                    "content_hash",
+                    "source_hash must be sha256:<64 hex digits>",
+                    "source_hash",
                 )
             )
     if "notes" in requirements and not isinstance(requirements["notes"], str):
@@ -392,7 +393,7 @@ def _snapshot_identity(
         )
     device = snapshot.get("source_device")
     version = snapshot.get("device_version")
-    digest = snapshot.get("content_hash")
+    digest = snapshot.get("source_hash")
     if not isinstance(device, str) or not device:
         errors.append(
             Issue("INVALID_SNAPSHOT", "source_device must be a non-empty string")
@@ -408,8 +409,8 @@ def _snapshot_identity(
         errors.append(
             Issue(
                 "INVALID_SNAPSHOT",
-                "content_hash must be sha256:<64 hex digits>",
-                "content_hash",
+                "source_hash must be sha256:<64 hex digits>",
+                "source_hash",
             )
         )
         digest = ""
@@ -469,7 +470,7 @@ def _check_pins(
     requirements: Any,
     device: str,
     device_version: str,
-    content_hash: str,
+    source_hash: str,
     errors: list[Issue],
 ) -> None:
     if not isinstance(requirements, dict):
@@ -493,15 +494,15 @@ def _check_pins(
                 "device_version",
             )
         )
-    pinned_hash = requirements.get("content_hash")
+    pinned_hash = requirements.get("source_hash")
     if isinstance(pinned_hash, str):
         normalized = normalize_content_hash(pinned_hash)
-        if normalized is not None and normalized != content_hash:
+        if normalized is not None and normalized != source_hash:
             errors.append(
                 Issue(
-                    "CONTENT_HASH_MISMATCH",
-                    f"requirements pin {normalized}, snapshot is {content_hash}",
-                    "content_hash",
+                    "SOURCE_HASH_MISMATCH",
+                    f"requirements pin {normalized}, snapshot source is {source_hash}",
+                    "source_hash",
                 )
             )
 

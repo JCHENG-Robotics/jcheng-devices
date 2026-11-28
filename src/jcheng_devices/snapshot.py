@@ -13,6 +13,7 @@ never a preference.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import re
@@ -35,17 +36,33 @@ SNAPSHOT_FIELDS: Final = (
     "schema",
     "source_device",
     "device_version",
+    "source_hash",
     "content_hash",
     "generated_by",
     "source_path",
     "capabilities",
     "joints",
+    "attributes",
     "safety_overlay",
     "notes",
 )
 OVERLAY_FIELDS: Final = ("schema", "source", "joint_limits", "workspace", "notes")
 PARAMETER_TYPES: Final = ("bool", "int", "float", "string", "duration", "list")
 FEEDBACK_TYPES: Final = ("bool", "int", "float", "string", "list")
+ATTRIBUTE_FIELDS: Final = (
+    "category",
+    "role",
+    "dof",
+    "control_modes",
+    "kinematics_declared",
+    "data_status",
+)
+ROLE_BY_CATEGORY: Final = {
+    "arm": "arm",
+    "mobile_base": "base",
+    "end_effector": "gripper",
+    "teleop_device": "teleop",
+}
 CAPABILITY_ID_RE: Final = re.compile(r"^[a-z][a-z0-9_]*\.[a-z][a-z0-9_]*$")
 SEMVER_RE: Final = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+$")
 
@@ -114,18 +131,22 @@ def build_snapshot(
             "it is not runtime authority."
         )
 
-    return {
+    document = {
         "schema": SNAPSHOT_SCHEMA,
         "source_device": profile["id"],
         "device_version": profile["profile_version"],
-        "content_hash": content_hash_of(profile),
+        "source_hash": content_hash_of(profile),
+        "content_hash": "",
         "generated_by": GENERATED_BY,
         "source_path": entry.path.relative_to(registry.root).as_posix(),
         "capabilities": _snapshot_capabilities(registry, profile),
         "joints": joints,
+        "attributes": _snapshot_attributes(profile),
         "safety_overlay": safety_overlay,
         "notes": notes,
     }
+    document["content_hash"] = artifact_content_hash(document)
+    return document
 
 
 def _snapshot_capabilities(
@@ -176,6 +197,82 @@ def _feedback_row(feedback: dict[str, Any]) -> dict[str, Any]:
     if "rate_hz" in feedback:
         row["rate_hz"] = feedback["rate_hz"]
     return row
+
+
+def _snapshot_attributes(profile: dict[str, Any]) -> dict[str, Any]:
+    """Return the declarative facts a cell composer needs to classify a device.
+
+    ``dof`` is ``None`` when the profile does not declare kinematics. A missing
+    value is never derived from the device name, the joint count or a vendor
+    claim: a seven-axis arm with no recorded kinematics still reports ``None``.
+    """
+
+    category = str(profile.get("category", ""))
+    kinematics = profile.get("kinematics")
+    declared = isinstance(kinematics, dict)
+    dof: int | None = None
+    control_modes: list[str] = []
+    joint_count = 0
+    if declared:
+        raw_dof = kinematics.get("dof")
+        if isinstance(raw_dof, int) and not isinstance(raw_dof, bool) and raw_dof > 0:
+            dof = raw_dof
+        raw_modes = kinematics.get("control_modes", [])
+        if isinstance(raw_modes, list):
+            control_modes = [str(mode) for mode in raw_modes]
+        raw_joints = kinematics.get("joints")
+        if isinstance(raw_joints, list):
+            joint_count = len(raw_joints)
+    attributes: dict[str, Any] = {
+        "category": category,
+        "role": _device_role(profile),
+        "dof": dof,
+        "control_modes": control_modes,
+        "kinematics_declared": declared and joint_count > 0,
+    }
+    if "data_status" in profile:
+        attributes["data_status"] = profile["data_status"]
+    return attributes
+
+
+def _device_role(profile: dict[str, Any]) -> str:
+    category = str(profile.get("category", ""))
+    if category != "sensor":
+        return ROLE_BY_CATEGORY.get(category, "device")
+    sensor = profile.get("sensor")
+    sensor_type = ""
+    if isinstance(sensor, dict):
+        sensor_type = str(sensor.get("sensor_type", ""))
+    if "camera" in sensor_type:
+        return "camera"
+    if "lidar" in sensor_type or "laser" in sensor_type:
+        return "lidar"
+    return "sensor"
+
+
+def artifact_content_hash(document: dict[str, Any]) -> str:
+    """Return the canonical self-hash of a snapshot document.
+
+    The encoding is the cross-repository convention: canonical JSON (sorted
+    keys, no whitespace, ASCII escaping) over every field except
+    ``content_hash`` itself, prefixed with ``sha256:``. ``source_hash`` keeps
+    the separate identity of the source profile.
+    """
+
+    body = {key: value for key, value in document.items() if key != "content_hash"}
+    try:
+        canonical = json.dumps(
+            body,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=True,
+            allow_nan=False,
+        )
+    except (TypeError, ValueError) as error:
+        raise SnapshotError(
+            [Issue("INVALID_SNAPSHOT", f"snapshot is not JSON-safe: {error}")]
+        ) from error
+    return "sha256:" + hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 
 def _snapshot_joints(profile: dict[str, Any]) -> list[dict[str, Any]]:
@@ -577,6 +674,14 @@ def validate_snapshot(data: Any) -> list[Issue]:
                 "device_version",
             )
         )
+    if not is_content_hash(data.get("source_hash")):
+        issues.append(
+            Issue(
+                "INVALID_SNAPSHOT",
+                "source_hash must be sha256:<64 lower-case hex digits>",
+                "source_hash",
+            )
+        )
     if not is_content_hash(data.get("content_hash")):
         issues.append(
             Issue(
@@ -585,6 +690,20 @@ def validate_snapshot(data: Any) -> list[Issue]:
                 "content_hash",
             )
         )
+    else:
+        try:
+            expected = artifact_content_hash(data)
+        except SnapshotError:
+            expected = ""
+        if expected and data.get("content_hash") != expected:
+            issues.append(
+                Issue(
+                    "STALE_SNAPSHOT",
+                    "content_hash does not match the canonical document; the "
+                    "snapshot was edited or generated by an incompatible tool",
+                    "content_hash",
+                )
+            )
 
     capabilities = data.get("capabilities")
     seen_capabilities: set[str] = set()
@@ -606,10 +725,63 @@ def validate_snapshot(data: Any) -> list[Issue]:
         for index, joint in enumerate(joints):
             _validate_snapshot_joint(joint, index, seen_joints, issues)
 
+    _validate_attributes(data.get("attributes"), issues)
     _validate_safety_overlay(data.get("safety_overlay"), issues)
     if not isinstance(data.get("notes"), str):
         issues.append(Issue("INVALID_SNAPSHOT", "notes must be a string", "notes"))
     return issues
+
+
+def _validate_attributes(attributes: Any, issues: list[Issue]) -> None:
+    path = "attributes"
+    if not isinstance(attributes, dict):
+        issues.append(
+            Issue("INVALID_SNAPSHOT", "attributes must be a mapping", path)
+        )
+        return
+    unknown = sorted(set(attributes) - set(ATTRIBUTE_FIELDS), key=str)
+    if unknown:
+        issues.append(
+            Issue(
+                "INVALID_SNAPSHOT",
+                "unknown attribute(s): " + ", ".join(str(item) for item in unknown),
+                path,
+            )
+        )
+    for field in ("category", "role"):
+        value = attributes.get(field)
+        if not isinstance(value, str) or not value:
+            issues.append(
+                Issue("INVALID_SNAPSHOT", f"{field} must be a non-empty string", path)
+            )
+    dof = attributes.get("dof")
+    if dof is not None and (
+        not isinstance(dof, int) or isinstance(dof, bool) or dof < 1
+    ):
+        issues.append(
+            Issue("INVALID_SNAPSHOT", "dof must be null or a positive integer", path)
+        )
+    modes = attributes.get("control_modes")
+    if not isinstance(modes, list) or any(not isinstance(item, str) for item in modes):
+        issues.append(
+            Issue("INVALID_SNAPSHOT", "control_modes must be a list of strings", path)
+        )
+    if not isinstance(attributes.get("kinematics_declared"), bool):
+        issues.append(
+            Issue(
+                "INVALID_SNAPSHOT",
+                "kinematics_declared must be a boolean",
+                path,
+            )
+        )
+    if "data_status" in attributes and attributes["data_status"] not in {
+        "complete",
+        "partial",
+        "missing",
+    }:
+        issues.append(
+            Issue("INVALID_SNAPSHOT", "data_status is not recognised", path)
+        )
 
 
 def _validate_snapshot_capability(
