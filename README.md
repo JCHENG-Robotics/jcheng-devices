@@ -33,7 +33,10 @@ What v0.1.0 provides:
   gripper position control, chassis velocity intent, and RGB, depth and laser
   scan streams.
 - `device-profile.v1` and `capability-profile.v1` JSON Schemas, an offline
-  validator, a four-command CLI and a fail-closed repository gate.
+  validator, a six-command CLI and a fail-closed repository gate.
+- Canonical content hashing, deterministic `jcheng.device_snapshot.v1` files
+  with an optional stricter-only safety overlay, and offline capability
+  compatibility matching. See [docs/SOURCE_OF_TRUTH.md](docs/SOURCE_OF_TRUTH.md).
 - An asset organisation standard for URDF/Xacro, calibration, hardware
   configuration and simulation assets. No asset is copied in v0.1.0.
 
@@ -68,9 +71,12 @@ jcheng-devices/
 ├── src/jcheng_devices/
 │   ├── schemas/               # device-profile.v1, capability-profile.v1
 │   ├── registry.py            # loading and cross-reference checks
-│   └── cli.py                 # list / show / validate / digest
+│   ├── hashing.py             # canonical YAML and content hash
+│   ├── snapshot.py            # deployment snapshot and safety overlay
+│   ├── compatibility.py       # requirements versus snapshot matching
+│   └── cli.py                 # list / show / validate / digest / snapshot / compatibility
 ├── tests/
-├── docs/
+├── docs/                      # architecture, schemas, source of truth, safety
 ├── assets/                    # layout only; no asset committed
 ├── scripts/check_repo_gate.sh
 └── evidence/
@@ -95,6 +101,9 @@ jcheng-devices validate
 jcheng-devices list
 jcheng-devices show hiwonder.armpi-ultra --json
 jcheng-devices digest
+
+# Generate a file-only deployment snapshot.
+jcheng-devices snapshot hiwonder.armpi-ultra --json
 
 # Run the tests and the repository gate without installing the package.
 python3 -m pytest -q tests

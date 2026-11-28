@@ -110,6 +110,7 @@ def test_document_set_exists():
         "docs/ARCHITECTURE.md",
         "docs/DEVICE_REGISTRY.md",
         "docs/PROFILE_SCHEMA.md",
+        "docs/SOURCE_OF_TRUTH.md",
         "docs/ASSET_LAYOUT.md",
         "docs/INTEGRATION.md",
         "docs/SAFETY_MODEL.md",

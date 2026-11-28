@@ -11,6 +11,22 @@ All notable changes to this project are documented here. Format based on
 - `SCHEMA_OWNERSHIP.md`: both repository-local Schemas now declare their owner,
   version, status (`repo-local`), consumers and promotion trigger. The contract
   test fails when a Schema file is not declared.
+- `hashing.py`: canonical YAML (sorted keys, UTF-8, no timestamp) and
+  `content_hash(path)`. Key order, comments and incidental file formatting do
+  not change the hash; a changed value does.
+- `snapshot.py` and the `snapshot` CLI command: deterministic
+  `jcheng.device_snapshot.v1` documents carrying source device, device version,
+  content hash, generator version, source path, capability declarations, joints
+  and the safety overlay record.
+- `compatibility.py` and the `compatibility` CLI command: offline matching of a
+  `jcheng.device_requirements.v1` document against a snapshot file. Unknown or
+  missing required capabilities, incompatible parameters and version or hash
+  mismatches are explicit errors; an absent optional capability is a warning.
+- `docs/SOURCE_OF_TRUTH.md`: the declaration/runtime authority split plus the
+  snapshot, overlay and compatibility rules for MIG-01.
+- Tests for canonical hashing, snapshot provenance and determinism, overlay
+  tightening and rejection, every compatibility outcome and both new CLI
+  commands.
 
 ### Changed
 
@@ -18,6 +34,12 @@ All notable changes to this project are documented here. Format based on
   source of joint ranges and state explicitly that they remain the runtime
   authority. Device profiles describe models and capabilities; they never
   replace or export runtime configuration.
+- The CLI now exposes six read-only commands. `list`, `show`, `validate` and
+  `digest` keep their output and exit codes.
+- A safety overlay is accepted only when it tightens joint limits or the
+  joint-space workspace. A looser, unknown or empty tightening is rejected.
+- No registry, profile, Schema or `jcheng-interfaces` contract change and no
+  new third-party dependency.
 
 ## [0.1.0] — 2026-11-27
 
