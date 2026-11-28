@@ -183,29 +183,29 @@ def test_device_version_mismatch_is_an_explicit_error(snapshot):
     assert "DEVICE_VERSION_MISMATCH" in _codes(report)
 
 
-def test_content_hash_mismatch_is_an_explicit_error(snapshot):
+def test_source_hash_mismatch_is_an_explicit_error(snapshot):
     report = match(
         _requirements(
             {"id": "arm.position_control", "required": True},
-            content_hash="sha256:" + "0" * 64,
+            source_hash="sha256:" + "0" * 64,
         ),
         snapshot,
     )
     assert report.deployable is False
-    assert "CONTENT_HASH_MISMATCH" in _codes(report)
+    assert "SOURCE_HASH_MISMATCH" in _codes(report)
 
 
-def test_bare_hex_content_hash_pin_is_accepted(snapshot):
+def test_bare_hex_source_hash_pin_is_accepted(snapshot):
     digest = content_hash(PROFILE)
     report = match(
         _requirements(
             {"id": "arm.position_control", "required": True},
-            content_hash=digest.split(":", 1)[1],
+            source_hash=digest.split(":", 1)[1],
         ),
         snapshot,
     )
     assert report.deployable is True
-    assert report.content_hash == digest
+    assert report.source_hash == digest
 
 
 def test_device_id_mismatch_is_an_explicit_error(snapshot):
