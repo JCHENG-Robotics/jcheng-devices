@@ -56,7 +56,7 @@ Rules:
 |---|---|
 | `device_id` | Stable registry id, for example `hiwonder.armpi-ultra` |
 | `device_version` | The profile's `profile_version`, `MAJOR.MINOR.PATCH` |
-| `content_hash` | `sha256:<64 lower-case hex>` over canonical YAML profile content |
+| `source_hash` | `sha256:<64 lower-case hex>` over canonical YAML profile content |
 | `source_path` | Registry-relative source file, for example `registry/devices/hiwonder.armpi-ultra.yaml` |
 
 Canonical YAML is:
@@ -88,11 +88,13 @@ its capability declarations. The format is `jcheng.device_snapshot.v1`:
 | `schema` | `jcheng.device_snapshot.v1` |
 | `source_device` | Device id |
 | `device_version` | Source `profile_version` |
-| `content_hash` | Content hash of the source profile |
+| `source_hash` | Content hash of the source profile |
+| `content_hash` | Canonical self-hash of the snapshot document (excludes `content_hash`) |
 | `generated_by` | `jcheng-devices <version>` |
 | `source_path` | Registry-relative source path |
 | `capabilities` | `[{id, parameters, feedback}]`, sorted by id |
 | `joints` | `[{name, role, limits}]` in profile order |
+| `attributes` | `{category, role, dof, control_modes, kinematics_declared}`; `dof` is null when undeclared |
 | `safety_overlay` | `{applied, source, content_hash, stricter_wins}` |
 | `notes` | Source notes, plus an overlay sentence when an overlay was applied |
 
@@ -102,7 +104,8 @@ Example (abbreviated):
 schema: jcheng.device_snapshot.v1
 source_device: hiwonder.armpi-ultra
 device_version: 0.1.0
-content_hash: sha256:f3c0c1b5373066599e46f85a63055a7a0cd3cd53f96c939bd4e101413551aeb9
+source_hash: sha256:f3c0c1b5373066599e46f85a63055a7a0cd3cd53f96c939bd4e101413551aeb9
+content_hash: sha256:71d9c1a0dc9a6a0a531d44f2e3a7d54f81f3ccb4f7ab2f4f1174d88f2c5f0f0a
 generated_by: jcheng-devices 0.1.0
 source_path: registry/devices/hiwonder.armpi-ultra.yaml
 capabilities:
@@ -140,7 +143,7 @@ Deterministic ordering:
 - paths are registry-relative POSIX paths.
 
 **No timestamp is embedded.** A timestamp would make two snapshots of identical
-content differ. Provenance is carried by `content_hash`, `device_version`,
+content differ. Provenance is carried by `source_hash`, `content_hash`, `device_version`,
 `generated_by` and the source path; the consumer records the repository commit
 and date in its own evidence. This is a deliberate deviation from the Phase 2
 design draft, which listed a timestamp.
@@ -160,7 +163,7 @@ The snapshot is data, not an API:
 - it is plain YAML or JSON and is parsed with a standard YAML/JSON reader;
 - the consumer does not import `jcheng_devices`, open a device or join a graph;
 - the consumer checks `schema`, `source_device`, `device_version` and
-  `content_hash` against its pinned reference;
+  `source_hash` against its pinned reference and recomputes `content_hash`;
 - a missing, unknown or mismatched value is rejected, never replaced by a
   default profile.
 
@@ -216,7 +219,7 @@ A requirement set is `jcheng.device_requirements.v1`:
 schema: jcheng.device_requirements.v1
 device: hiwonder.armpi-ultra
 device_version: 0.1.0
-content_hash: sha256:f3c0c1b5373066599e46f85a63055a7a0cd3cd53f96c939bd4e101413551aeb9
+source_hash: sha256:f3c0c1b5373066599e46f85a63055a7a0cd3cd53f96c939bd4e101413551aeb9
 capabilities:
   - id: arm.position_control
     required: true
@@ -229,9 +232,9 @@ notes: Offline reference requirement.
 
 Matching rules:
 
-1. `device`, `device_version` and `content_hash` are optional exact pins. A
+1. `device`, `device_version` and `source_hash` are optional exact pins. A
    mismatch is `DEVICE_ID_MISMATCH`, `DEVICE_VERSION_MISMATCH` or
-   `CONTENT_HASH_MISMATCH`.
+   `SOURCE_HASH_MISMATCH`.
 2. A capability requirement is required unless it explicitly says
    `required: false`. There is no default "assume deployable".
 3. A required capability that the snapshot does not declare is reported as both

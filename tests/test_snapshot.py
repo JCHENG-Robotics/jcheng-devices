@@ -17,6 +17,7 @@ from jcheng_devices.snapshot import (
     SNAPSHOT_FIELDS,
     SNAPSHOT_SCHEMA,
     SnapshotError,
+    artifact_content_hash,
     build_snapshot,
     dump_snapshot,
     load_snapshot,
@@ -78,7 +79,8 @@ def test_snapshot_has_exactly_the_v1_fields(snapshot):
 def test_snapshot_provenance_matches_the_source_profile(snapshot):
     assert snapshot["source_device"] == "hiwonder.armpi-ultra"
     assert snapshot["device_version"] == "0.1.0"
-    assert snapshot["content_hash"] == content_hash(PROFILE)
+    assert snapshot["source_hash"] == content_hash(PROFILE)
+    assert snapshot["content_hash"] == artifact_content_hash(snapshot)
     assert snapshot["generated_by"] == GENERATED_BY
     assert snapshot["generated_by"].endswith(__version__)
     assert snapshot["source_path"] == "registry/devices/hiwonder.armpi-ultra.yaml"
@@ -105,6 +107,23 @@ def test_snapshot_joints_keep_profile_order_and_limits(snapshot):
     assert [joint["name"] for joint in snapshot["joints"]] == list(BASE_LIMITS)
     assert _limits(snapshot) == BASE_LIMITS
     assert snapshot["joints"][0]["role"] == "shoulder_pan"
+
+
+def test_snapshot_attributes_express_dof_and_role(snapshot):
+    assert snapshot["attributes"] == {
+        "category": "arm",
+        "role": "arm",
+        "dof": 5,
+        "control_modes": ["position"],
+        "kinematics_declared": True,
+    }
+
+
+def test_edited_snapshot_is_rejected_as_stale(snapshot):
+    edited = dict(snapshot)
+    edited["notes"] = "edited after generation"
+    codes = {issue.code for issue in validate_snapshot(edited)}
+    assert "STALE_SNAPSHOT" in codes
 
 
 def test_snapshot_is_byte_deterministic(registry):
@@ -253,6 +272,9 @@ def test_sensor_snapshot_has_no_joints(registry):
         "sensor.rgb_stream",
     ]
     assert validate_snapshot(sensor) == []
+    assert sensor["attributes"]["role"] == "camera"
+    assert sensor["attributes"]["dof"] is None
+    assert sensor["attributes"]["category"] == "sensor"
 
 
 def test_validate_snapshot_rejects_a_missing_field(snapshot):
