@@ -33,11 +33,15 @@ for f in \
   registry/registry.yaml \
   src/jcheng_devices/cli.py \
   src/jcheng_devices/registry.py \
+  src/jcheng_devices/hashing.py \
+  src/jcheng_devices/snapshot.py \
+  src/jcheng_devices/compatibility.py \
   src/jcheng_devices/schemas/device-profile.v1.schema.json \
   src/jcheng_devices/schemas/capability-profile.v1.schema.json \
   docs/ARCHITECTURE.md \
   docs/DEVICE_REGISTRY.md \
   docs/PROFILE_SCHEMA.md \
+  docs/SOURCE_OF_TRUTH.md \
   docs/ASSET_LAYOUT.md \
   docs/INTEGRATION.md \
   docs/SAFETY_MODEL.md \
@@ -49,6 +53,10 @@ for f in \
   tests/test_registry.py \
   tests/test_profiles.py \
   tests/test_cli.py \
+  tests/test_cli_source_of_truth.py \
+  tests/test_hashing.py \
+  tests/test_snapshot.py \
+  tests/test_compatibility.py \
   tests/test_reference_devices.py \
   scripts/check_repo_gate.sh \
   evidence/20261127_scaffold/README.md \

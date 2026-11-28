@@ -29,7 +29,10 @@ v0.1.0 提供：
 - 七个设备能力描述：机械臂位置控制与反馈、夹爪位置控制、底盘速度意图，以及
   RGB、深度与激光扫描数据流。
 - `device-profile.v1` 与 `capability-profile.v1` JSON Schema、离线校验器、
-  四个命令的 CLI 以及失败关闭的仓库门禁。
+  六个命令的 CLI 以及失败关闭的仓库门禁。
+- 规范化内容哈希、确定性的 `jcheng.device_snapshot.v1` 快照（可附带只收紧的
+  安全覆盖）以及离线能力兼容性匹配。详见
+  [docs/SOURCE_OF_TRUTH.md](docs/SOURCE_OF_TRUTH.md)。
 - URDF/Xacro、标定、硬件配置与仿真资产的组织规范。v0.1.0 不复制任何资产。
 
 本仓库明确不做：
@@ -60,9 +63,12 @@ jcheng-devices/
 ├── src/jcheng_devices/
 │   ├── schemas/               # device-profile.v1、capability-profile.v1
 │   ├── registry.py            # 加载与交叉引用校验
-│   └── cli.py                 # list / show / validate / digest
+│   ├── hashing.py             # 规范化 YAML 与内容哈希
+│   ├── snapshot.py            # 部署快照与安全覆盖
+│   ├── compatibility.py       # 需求与快照的匹配
+│   └── cli.py                 # list / show / validate / digest / snapshot / compatibility
 ├── tests/
-├── docs/
+├── docs/                      # 架构、Schema、真源与安全文档
 ├── assets/                    # 仅目录规范；未提交资产
 ├── scripts/check_repo_gate.sh
 └── evidence/
@@ -87,6 +93,9 @@ jcheng-devices validate
 jcheng-devices list
 jcheng-devices show hiwonder.armpi-ultra --json
 jcheng-devices digest
+
+# 生成仅以文件形式消费的部署快照。
+jcheng-devices snapshot hiwonder.armpi-ultra --json
 
 # 不安装包也能运行测试与仓库门禁。
 python3 -m pytest -q tests
