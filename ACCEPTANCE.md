@@ -23,7 +23,7 @@
 | Claim | Level | Evidence |
 |---|---|---|
 | Every registered profile loads, matches its schema and resolves its capability references | L1 | [evidence/20261127_scaffold/pytest.txt](evidence/20261127_scaffold/pytest.txt) |
-| The registry contains six device profiles and seven capability profiles | L1 | `tests/test_registry.py`; `tests/test_profiles.py` |
+| The registry contains nine device profiles and seven capability profiles | L1 | `tests/test_registry.py`; `tests/test_profiles.py` |
 | Duplicate identifiers, path escapes, unknown capabilities, category mismatches and inconsistent verification statements are rejected | L1 | `tests/test_registry.py` |
 | All five device categories are reserved; four are populated | L0 | `tests/test_registry.py`; `docs/DEVICE_REGISTRY.md` |
 | Code and data contain no device-opening, runtime-graph or motion tokens | L0 | `tests/test_no_hardware.py` |

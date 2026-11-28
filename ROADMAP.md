@@ -8,7 +8,7 @@
 
 | Item | State | Evidence |
 |---|---|---|
-| Registry, six device profiles, seven capability profiles | Complete | `registry/registry.yaml`; [evidence/20261127_scaffold/](evidence/20261127_scaffold/README.md) |
+| Registry, nine device profiles, seven capability profiles | Complete | `registry/registry.yaml`; [evidence/20261127_scaffold/](evidence/20261127_scaffold/README.md) |
 | `device-profile.v1` and `capability-profile.v1` schemas | Complete | `src/jcheng_devices/schemas/` |
 | Offline validator, CLI and deterministic digest | Complete | `src/jcheng_devices/`; `tests/` |
 | Repository gate and CI | Complete | `scripts/check_repo_gate.sh`; `.github/workflows/ci.yml` |

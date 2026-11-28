@@ -66,7 +66,7 @@ jcheng-devices/
 ├── SCHEMA_OWNERSHIP.md        # schema owner, status, consumers, promotion triggers
 ├── registry/
 │   ├── registry.yaml          # explicit index
-│   ├── devices/               # six device profiles
+│   ├── devices/               # nine device profiles
 │   └── capabilities/          # seven capability profiles
 ├── src/jcheng_devices/
 │   ├── schemas/               # device-profile.v1, capability-profile.v1
