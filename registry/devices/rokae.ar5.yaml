@@ -1,0 +1,41 @@
+schema_version: 1
+kind: device-profile
+id: rokae.ar5
+display_name: Rokae AR5
+category: arm
+status: planned
+data_status: missing
+description: >
+  Seven-axis industrial arm reported by the owner as the third ecosystem arm.
+  At registration time no SDK, URDF, joint limits, calibration, firmware or
+  hardware data was found in the workspace. This profile is a registration
+  placeholder, not a capability, kinematic or safety claim.
+profile_version: "0.1.0"
+vendor:
+  name: Rokae
+  product: AR5
+  source: >-
+    Owner statement 2026-11-28. No local vendor SDK, URDF, manual, calibration
+    or experiment data was found; the only local mention is a WeChat training
+    note that references a `rokae_1119` dataset, not a device asset.
+  verification: unverified
+verification:
+  status: unverified
+  evidence: []
+  date: ""
+  notes: >
+    DOF 7 is owner-reported and lives in the notes/asset inventory, not in the
+    device ID. Joint names, limits, velocity, payload, reach, control interface,
+    firmware and SDK are not recorded. Do not use this profile for planning,
+    limits, compatibility claims or deployment.
+hardware:
+  interfaces:
+    - "not recorded; vendor documentation and SDK not found"
+capabilities:
+  - arm.position_control
+notes: >
+  Planned registration only. `arm.position_control` is a generic planned
+  capability, not a vendor-confirmed fact; replace it with vendor-confirmed
+  capabilities when SDK/URDF/calibration data is registered. DOF is a device
+  attribute, not the device name. Device model = `rokae.ar5`; instance IDs are
+  assigned separately when a real unit exists.

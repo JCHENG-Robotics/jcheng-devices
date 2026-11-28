@@ -109,6 +109,7 @@ def test_document_set_exists():
         "src/jcheng_devices/schemas/capability-profile.v1.schema.json",
         "docs/ARCHITECTURE.md",
         "docs/DEVICE_REGISTRY.md",
+        "docs/DEVICE_ASSET_INVENTORY.md",
         "docs/PROFILE_SCHEMA.md",
         "docs/ASSET_LAYOUT.md",
         "docs/INTEGRATION.md",

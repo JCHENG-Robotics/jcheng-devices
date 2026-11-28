@@ -8,6 +8,16 @@ All notable changes to this project are documented here. Format based on
 
 ### Added
 
+- `rokae.ar5`: planned, data-missing registration placeholder (7-axis
+  owner-reported; no SDK/URDF/limits/calibration found). `data_status: missing`
+  allows a planned arm profile without invented kinematics; it is never
+  deployable.
+- `docs/DEVICE_ASSET_INVENTORY.md`: read-only inventory for ArmPi Ultra,
+  PiPER X and AR5, including private-asset categories, licenses and
+  confidentiality rules.
+- PiPER X provenance now cites the public vendor repositories (URDF/ROS MIT,
+  pyAgxArm LGPL-3.0, piper_sdk MIT), the local cache provenance/SHA256SUMS and
+  the unverified CAN interface.
 - `SCHEMA_OWNERSHIP.md`: both repository-local Schemas now declare their owner,
   version, status (`repo-local`), consumers and promotion trigger. The contract
   test fails when a Schema file is not declared.

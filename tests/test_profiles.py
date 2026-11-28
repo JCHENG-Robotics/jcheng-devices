@@ -55,6 +55,7 @@ def test_arm_profiles_have_consistent_kinematics():
         entry
         for entry in REGISTRY.devices.values()
         if entry.profile["category"] == "arm"
+        and entry.profile.get("data_status") != "missing"
     ]
     assert arm_entries
     for entry in arm_entries:

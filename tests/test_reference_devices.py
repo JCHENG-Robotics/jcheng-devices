@@ -154,3 +154,15 @@ def test_no_payload_is_claimed_anywhere():
     for entry in REGISTRY.devices.values():
         assert "max_payload_kg" not in entry.profile
         assert "payload_kg" not in entry.profile
+
+
+def test_rokae_ar5_is_a_data_missing_placeholder():
+    profile = _profile("rokae.ar5")
+    assert profile["status"] == "planned"
+    assert profile["data_status"] == "missing"
+    assert profile["verification"]["status"] == "unverified"
+    assert profile["verification"]["evidence"] == []
+    assert "kinematics" not in profile
+    assert profile["capabilities"] == ["arm.position_control"]
+    assert "seven-axis" in profile["description"].lower()
+    assert "not recorded" in profile["hardware"]["interfaces"][0]
