@@ -1,0 +1,44 @@
+schema_version: 1
+kind: device-profile
+id: rokae.ar5r
+display_name: Rokae AR5R (right arm)
+category: arm
+status: planned
+data_status: missing
+description: >
+  Right arm of the ROKAE AR5 dual-arm pair. The ROKAE ROS 2 manual identifies
+  the AR5L / AR5R variants and the AR5 family's seven-axis configuration; no
+  local SDK, URDF, variant-specific joint signs, calibration or measured unit
+  exists in this workspace. This is a registration placeholder for the right
+  unit, not a capability, kinematic or safety claim.
+profile_version: "0.1.0"
+vendor:
+  name: Rokae
+  product: AR5R
+  url: "https://docs.rokae.com/downloads/ROS2/current/en/ROS2_Manual_en.pdf"
+  source: >-
+    ROKAE ROS 2 manual (AR5L/AR5R model identifiers and dual-arm context) and
+    the AR-series product page (7 DOF family facts). No local vendor material
+    for this variant was found.
+  verification: unverified
+verification:
+  status: unverified
+  evidence:
+    - "https://docs.rokae.com/downloads/ROS2/current/en/ROS2_Manual_en.pdf"
+    - "https://www.rokae.com/en/product/show/595/"
+  date: "2026-11-28"
+  notes: >
+    Variant-specific mirroring, joint signs, limits, velocity, payload-at-reach,
+    controller configuration and the ecosystem control interface are not
+    recorded. Do not plan or deploy from this profile.
+hardware:
+  interfaces:
+    - "not recorded locally; AR5 family is vendor-public EtherCAT"
+    - "no local SDK, URDF or calibration"
+capabilities:
+  - arm.position_control
+notes: >
+  Planned right-unit registration. The device ID names the model variant; the
+  physical instance is recorded separately (for example
+  `rokae.ar5r@cell-right`). The family profile `rokae.ar5` is not a substitute
+  for this unit. Do not use for planning, limits or deployment.

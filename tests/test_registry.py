@@ -73,7 +73,7 @@ def _arm_joint_feedback() -> dict:
 def test_repository_registry_is_valid():
     registry = Registry.load(ROOT)
     assert registry.ok, "\n".join(issue.render() for issue in registry.issues)
-    assert len(registry.devices) == 7
+    assert len(registry.devices) == 9
     assert len(registry.capabilities) == 7
 
 

@@ -174,3 +174,16 @@ def test_rokae_ar5_records_verified_model_and_vendor_public_facts():
     assert profile["capabilities"] == ["arm.position_control"]
     assert "seven-axis" in profile["description"].lower()
     assert "EtherCAT" in profile["hardware"]["interfaces"][0]
+
+
+def test_rokae_ar5_left_and_right_are_separate_missing_variants():
+    left = _profile("rokae.ar5l")
+    right = _profile("rokae.ar5r")
+    for profile, product in ((left, "AR5L"), (right, "AR5R")):
+        assert profile["status"] == "planned"
+        assert profile["data_status"] == "missing"
+        assert profile["vendor"]["product"] == product
+        assert "kinematics" not in profile
+        assert profile["capabilities"] == ["arm.position_control"]
+        assert profile["verification"]["status"] == "unverified"
+        assert "docs.rokae.com" in profile["vendor"]["url"]
