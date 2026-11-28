@@ -105,7 +105,7 @@ schema: jcheng.device_snapshot.v1
 source_device: hiwonder.armpi-ultra
 device_version: 0.1.0
 source_hash: sha256:f3c0c1b5373066599e46f85a63055a7a0cd3cd53f96c939bd4e101413551aeb9
-content_hash: sha256:71d9c1a0dc9a6a0a531d44f2e3a7d54f81f3ccb4f7ab2f4f1174d88f2c5f0f0a
+content_hash: sha256:602e211ed6be27823154c1cd7ac06a97af9db95c45c844531408cfc0f729dbeb
 generated_by: jcheng-devices 0.1.0
 source_path: registry/devices/hiwonder.armpi-ultra.yaml
 capabilities:
