@@ -243,10 +243,15 @@ Matching rules:
 5. A requirement parameter that the capability does not declare, or whose value
    does not match the declared type, is `INCOMPATIBLE_PARAMETER`.
 6. A requirements set with no required capability is
-   `NO_REQUIRED_CAPABILITY` and is not deployable.
-7. `deployable` is true only when there is no error and every required
-   capability is `satisfied`. Warnings do not make a result deployable on their
-   own; an absent required capability always prevents it.
+   `NO_REQUIRED_CAPABILITY` and is not capability-satisfied.
+7. `capability_satisfied` is true only when there is no error and every
+   required capability is `satisfied`. Warnings do not make a result
+   capability-satisfied on their own; an absent required capability always
+   prevents it.
+8. `deployable` is a **deprecated alias** for `capability_satisfied`. It never
+   means deployment permission. `deployment_ready` and `motion_authorized` are
+   always `false` in this repository; deployment conditions and motion
+   authorization belong to the system/runtime authority.
 
 Run the matcher:
 
@@ -257,13 +262,16 @@ jcheng-devices compatibility \
   --json
 ```
 
-Exit codes: `0` deployable, `1` not deployable or an invalid requirement /
-snapshot, `2` the snapshot or requirements file cannot be read.
+Exit codes: `0` capability-satisfied, `1` not capability-satisfied or an
+invalid requirement / snapshot, `2` the snapshot or requirements file cannot
+be read.
 
-The report is `jcheng.device_compatibility.v1` with `ok`, `deployable`,
-`errors`, `warnings` and one row per capability (`satisfied`, `missing` or
-`incompatible`). A report is evidence of a declaration match only; it is not a
-hardware validation or a safety certification.
+The report is `jcheng.device_compatibility.v1` with `ok`,
+`capability_satisfied`, `deployable` (deprecated alias), `deployment_ready`,
+`motion_authorized`, `errors`, `warnings` and one row per capability
+(`satisfied`, `missing` or `incompatible`). A report is evidence of a
+declaration match only; it is not a hardware validation, a deployment permit or
+a safety certification.
 
 ### Error codes
 

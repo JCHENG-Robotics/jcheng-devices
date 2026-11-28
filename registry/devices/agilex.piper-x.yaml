@@ -13,7 +13,10 @@ profile_version: "0.1.0"
 vendor:
   name: AgileX
   product: PiPER X
-  source: "jcheng-system simulation-only robot profile; vendor datasheet review pending."
+  source: >-
+    Public vendor repositories (agx_arm_urdf@680fa925, agx_arm_ros@747d0722,
+    pyAgxArm@d90e234b, piper_sdk@b847e539) and the local asset cache
+    provenance/SHA256SUMS; the system robot profile is simulation-only.
   verification: unverified
 verification:
   status: unverified
@@ -23,10 +26,12 @@ verification:
     The system robot profile is simulation-only and carries no servo IDs,
     workspace or table plane. No PiPER X hardware is present in this workspace.
     Joint limits, velocity, payload and bus configuration must be reviewed
-    against the vendor datasheet before the status moves to reference.
+    against the vendor datasheet and the actual unit before the status moves to
+    reference. Public URDF/ROS are MIT; pyAgxArm is LGPL-3.0; piper_sdk is MIT.
+    Local vendor assets stay outside the repository and are not committed.
 hardware:
   interfaces:
-    - "not recorded; datasheet review pending"
+    - "CAN 1 Mbps (vendor documentation; not verified on hardware)"
 kinematics:
   dof: 6
   control_modes:

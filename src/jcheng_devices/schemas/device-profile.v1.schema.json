@@ -35,6 +35,10 @@
       "enum": ["reference", "candidate", "planned"],
       "description": "Registry role. reference = in use on a robot; candidate = under evaluation; planned = reserved, not connected."
     },
+    "data_status": {
+      "enum": ["complete", "partial", "missing"],
+      "description": "Completeness of device facts. 'missing' is a planned registration placeholder without kinematics or limits; it is never deployable."
+    },
     "description": {"type": "string", "minLength": 10, "maxLength": 2000},
     "profile_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
     "vendor": {
@@ -198,7 +202,14 @@
   "allOf": [
     {
       "if": {"required": ["category"], "properties": {"category": {"const": "arm"}}},
-      "then": {"required": ["kinematics"]}
+      "then": {
+        "if": {
+          "required": ["data_status"],
+          "properties": {"data_status": {"const": "missing"}}
+        },
+        "then": {},
+        "else": {"required": ["kinematics"]}
+      }
     },
     {
       "if": {"required": ["category"], "properties": {"category": {"const": "mobile_base"}}},
