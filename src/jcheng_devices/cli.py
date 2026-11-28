@@ -272,7 +272,7 @@ def _compatibility(args: argparse.Namespace) -> int:
 
 def _print_compatibility(report: CompatibilityReport) -> None:
     verdict = "deployable" if report.deployable else "not deployable"
-    print(f"{verdict}: {report.device} {report.device_version} ({report.content_hash})")
+    print(f"{verdict}: {report.device} {report.device_version} ({report.source_hash})")
     for item in report.capabilities:
         suffix = "required" if item.required else "optional"
         print(f"  {item.status}: {item.id} ({suffix})")
