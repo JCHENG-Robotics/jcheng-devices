@@ -1,0 +1,108 @@
+schema_version: 1
+kind: device-profile
+id: rokae.ar5
+display_name: Rokae AR5
+category: arm
+status: planned
+data_status: partial
+description: >
+  Seven-axis humanoid force-controlled arm. The AR5 model and the 7-DOF
+  configuration were re-checked against the vendor's official AR-series product
+  page on 2026-11-28; the earlier owner statement is consistent with it. No
+  local SDK, URDF, control adapter, calibration or hardware data exists in this
+  workspace, so the profile remains a registration record with vendor-public
+  facts only. It is not a local capability, kinematic-accuracy or safety claim.
+profile_version: "0.2.0"
+vendor:
+  name: Rokae
+  product: AR5
+  url: "https://www.rokae.com/en/product/show/595/"
+  source: >-
+    ROKAE official AR series product page, accessed 2026-11-28: 7 DOF, rated
+    payload 5 kg, operating radius 683 mm, EtherCAT, joint torque sensors
+    standard, and the published joint ranges. No local vendor SDK, URDF,
+    manual, calibration or measured data was found.
+  verification: unverified
+verification:
+  status: unverified
+  evidence:
+    - "https://www.rokae.com/en/product/show/595/"
+  date: "2026-11-28"
+  notes: >
+    The model name and 7-DOF configuration are vendor-public facts, not a
+    measured local unit. Joint names, sign conventions, velocity, acceleration,
+    payload at reach, repeatability under load and the ecosystem control
+    interface are not verified locally. The published joint ranges are recorded
+    for registration only and must be checked against the real controller
+    before any planning or limit use.
+hardware:
+  interfaces:
+    - "EtherCAT (vendor-public; local SDK/control adapter not present)"
+    - "no local URDF, calibration or measured workspace"
+kinematics:
+  dof: 7
+  control_modes:
+    - position
+    - torque
+  feedback:
+    - "joint torque sensor standard configuration (vendor-public)"
+    - "joint position feedback (protocol and units not verified locally)"
+  workspace:
+    description: >-
+      Vendor-public operating radius 683 mm. The joint-space envelope, payload
+      at reach and collision geometry are not verified locally.
+    verified: false
+    source: "ROKAE official AR series product page, accessed 2026-11-28."
+  joints:
+    - name: axis1
+      role: axis1
+      type: revolute
+      limits: {min_deg: -178.0, max_deg: 178.0}
+      source: "Vendor-public joint range, accessed 2026-11-28; not measured locally."
+      verified: false
+    - name: axis2
+      role: axis2
+      type: revolute
+      limits: {min_deg: -120.0, max_deg: 120.0}
+      source: "Vendor-public joint range, accessed 2026-11-28; not measured locally."
+      verified: false
+    - name: axis3
+      role: axis3
+      type: revolute
+      limits: {min_deg: -178.0, max_deg: 178.0}
+      source: "Vendor-public joint range, accessed 2026-11-28; not measured locally."
+      verified: false
+    - name: axis4
+      role: axis4
+      type: revolute
+      limits: {min_deg: -60.0, max_deg: 145.0}
+      source: "Vendor-public joint range, accessed 2026-11-28; not measured locally."
+      verified: false
+    - name: axis5
+      role: axis5
+      type: revolute
+      limits: {min_deg: -178.0, max_deg: 178.0}
+      source: "Vendor-public joint range, accessed 2026-11-28; not measured locally."
+      verified: false
+    - name: axis6
+      role: axis6
+      type: revolute
+      limits: {min_deg: -60.0, max_deg: 60.0}
+      source: "Vendor-public joint range, accessed 2026-11-28; not measured locally."
+      verified: false
+    - name: axis7
+      role: axis7
+      type: revolute
+      limits: {min_deg: -90.0, max_deg: 90.0}
+      source: "Vendor-public joint range, accessed 2026-11-28; not measured locally."
+      verified: false
+capabilities:
+  - arm.position_control
+notes: >
+  Planned registration only. `arm.position_control` is a generic planned
+  capability, not a vendor-confirmed ecosystem interface; replace it with
+  vendor-confirmed capabilities when the SDK/URDF/calibration are registered.
+  DOF is a device attribute, not the device name. Device model = `rokae.ar5`;
+  instance IDs are assigned separately when a real unit exists. Do not plan,
+  limit-check or deploy from this profile until local controller data is
+  verified.

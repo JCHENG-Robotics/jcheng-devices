@@ -42,7 +42,7 @@ def test_validate_reports_ok_as_json():
     assert result.returncode == 0, result.stderr
     payload = json.loads(result.stdout)
     assert payload["ok"] is True
-    assert payload["devices"] == 6
+    assert payload["devices"] == 7
     assert payload["capabilities"] == 7
     assert payload["issues"] == []
 

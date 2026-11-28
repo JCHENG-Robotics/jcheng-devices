@@ -55,13 +55,21 @@ class CapabilityMatch:
 
 @dataclass(frozen=True)
 class CompatibilityReport:
-    """Result of :func:`match`; ``deployable`` is false unless every required capability passes."""
+    """Capability-only result.
+
+    ``capability_satisfied`` means every required *declared capability* passed.
+    It does not authorize deployment or motion. ``deployable`` is a deprecated
+    alias kept for older consumers.
+    """
 
     device: str
     device_version: str
     source_hash: str
     ok: bool
+    capability_satisfied: bool
     deployable: bool
+    deployment_ready: bool = False
+    motion_authorized: bool = False
     errors: tuple[Issue, ...] = ()
     warnings: tuple[Issue, ...] = ()
     capabilities: tuple[CapabilityMatch, ...] = ()
@@ -73,7 +81,10 @@ class CompatibilityReport:
             "device_version": self.device_version,
             "source_hash": self.source_hash,
             "ok": self.ok,
+            "capability_satisfied": self.capability_satisfied,
             "deployable": self.deployable,
+            "deployment_ready": self.deployment_ready,
+            "motion_authorized": self.motion_authorized,
             "errors": [issue.as_dict() for issue in self.errors],
             "warnings": [issue.as_dict() for issue in self.warnings],
             "capabilities": [item.as_dict() for item in self.capabilities],
@@ -212,7 +223,10 @@ def match(
         device_version=device_version,
         source_hash=source_hash,
         ok=not errors,
+        capability_satisfied=deployable,
         deployable=deployable,
+        deployment_ready=False,
+        motion_authorized=False,
         errors=tuple(errors),
         warnings=tuple(warnings),
         capabilities=tuple(matches),

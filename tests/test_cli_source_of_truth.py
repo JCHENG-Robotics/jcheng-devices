@@ -168,7 +168,7 @@ def test_compatibility_cli_human_output_has_a_verdict(tmp_path):
         str(snapshot),
     )
     assert result.returncode == 0, result.stderr
-    assert "deployable: hiwonder.armpi-ultra" in result.stdout
+    assert "capability satisfied: hiwonder.armpi-ultra" in result.stdout
     assert "result: PASS" in result.stdout
 
 

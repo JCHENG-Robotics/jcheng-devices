@@ -267,11 +267,15 @@ def _compatibility(args: argparse.Namespace) -> int:
         )
     else:
         _print_compatibility(report)
-    return 0 if report.deployable else 1
+    return 0 if report.capability_satisfied else 1
 
 
 def _print_compatibility(report: CompatibilityReport) -> None:
-    verdict = "deployable" if report.deployable else "not deployable"
+    verdict = (
+        "capability satisfied"
+        if report.capability_satisfied
+        else "capability requirements not satisfied"
+    )
     print(f"{verdict}: {report.device} {report.device_version} ({report.source_hash})")
     for item in report.capabilities:
         suffix = "required" if item.required else "optional"
@@ -281,6 +285,6 @@ def _print_compatibility(report: CompatibilityReport) -> None:
     for error in report.errors:
         print(f"error: {error.render()}", file=sys.stderr)
     print(
-        f"result: {'PASS' if report.deployable else 'FAIL'} "
+        f"result: {'PASS' if report.capability_satisfied else 'FAIL'} "
         f"({len(report.errors)} error(s), {len(report.warnings)} warning(s))"
     )

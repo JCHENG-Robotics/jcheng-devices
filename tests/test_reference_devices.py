@@ -154,3 +154,23 @@ def test_no_payload_is_claimed_anywhere():
     for entry in REGISTRY.devices.values():
         assert "max_payload_kg" not in entry.profile
         assert "payload_kg" not in entry.profile
+
+
+def test_rokae_ar5_records_verified_model_and_vendor_public_facts():
+    profile = _profile("rokae.ar5")
+    assert profile["status"] == "planned"
+    assert profile["data_status"] == "partial"
+    assert profile["verification"]["status"] == "unverified"
+    assert profile["verification"]["evidence"] == [
+        "https://www.rokae.com/en/product/show/595/"
+    ]
+    assert profile["vendor"]["product"] == "AR5"
+    assert profile["vendor"]["url"] == "https://www.rokae.com/en/product/show/595/"
+    assert profile["kinematics"]["dof"] == 7
+    assert [joint["name"] for joint in profile["kinematics"]["joints"]] == [
+        "axis1", "axis2", "axis3", "axis4", "axis5", "axis6", "axis7"
+    ]
+    assert profile["kinematics"]["workspace"]["verified"] is False
+    assert profile["capabilities"] == ["arm.position_control"]
+    assert "seven-axis" in profile["description"].lower()
+    assert "EtherCAT" in profile["hardware"]["interfaces"][0]

@@ -288,3 +288,19 @@ def test_report_is_json_serialisable(snapshot):
     assert json.loads(json.dumps(payload)) == payload
     assert report["ok"] is True
     assert report.get("deployable") is True
+
+
+def test_capability_satisfaction_is_not_deployment_or_motion_authority(snapshot):
+    report = match(
+        _requirements({"id": "arm.position_control", "required": True}),
+        snapshot,
+    )
+    assert report.capability_satisfied is True
+    assert report.deployable is True  # deprecated alias, capability only
+    assert report.deployment_ready is False
+    assert report.motion_authorized is False
+    payload = report.as_dict()
+    assert payload["capability_satisfied"] is True
+    assert payload["deployable"] is True
+    assert payload["deployment_ready"] is False
+    assert payload["motion_authorized"] is False
