@@ -1,7 +1,9 @@
 """Command line interface for the offline device library.
 
 Commands are read-only and deterministic. ``validate`` exits 1 when any issue
-is found, so CI fails closed.
+is found, so CI fails closed. ``snapshot`` writes a deployment-shaped file and
+``compatibility`` matches requirements against such a file; neither opens a
+device or joins a runtime.
 """
 
 from __future__ import annotations
@@ -14,8 +16,17 @@ from typing import Sequence
 
 import yaml
 
+from .compatibility import CompatibilityReport, load_requirements, match
 from .errors import LoadError
 from .registry import Registry
+from .snapshot import (
+    SnapshotError,
+    build_snapshot,
+    dump_snapshot,
+    load_overlay,
+    load_snapshot,
+    write_snapshot,
+)
 from .version import __version__
 
 
@@ -53,11 +64,54 @@ def build_parser() -> argparse.ArgumentParser:
     )
     digest_parser.add_argument("--json", action="store_true", dest="as_json")
 
+    snapshot_parser = sub.add_parser(
+        "snapshot",
+        help="generate a deterministic deployment snapshot for one device",
+    )
+    snapshot_parser.add_argument("device_id")
+    snapshot_parser.add_argument(
+        "--overlay",
+        type=Path,
+        default=None,
+        help="safety overlay YAML; it may only tighten joint limits or workspace",
+    )
+    snapshot_parser.add_argument(
+        "--output",
+        type=Path,
+        default=None,
+        help="write the snapshot to this file instead of standard output",
+    )
+    snapshot_parser.add_argument("--json", action="store_true", dest="as_json")
+
+    compatibility_parser = sub.add_parser(
+        "compatibility",
+        help="match device capability requirements against a snapshot file",
+    )
+    compatibility_parser.add_argument(
+        "--requirements",
+        type=Path,
+        required=True,
+        help="requirements YAML (jcheng.device_requirements.v1)",
+    )
+    compatibility_parser.add_argument(
+        "--snapshot",
+        type=Path,
+        required=True,
+        help="snapshot YAML (jcheng.device_snapshot.v1)",
+    )
+    compatibility_parser.add_argument("--json", action="store_true", dest="as_json")
+
     return parser
 
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+
+    # Compatibility consumes two files and does not need the registry; keeping
+    # it registry-free makes the snapshot a standalone consumer artifact.
+    if args.command == "compatibility":
+        return _compatibility(args)
+
     try:
         registry = Registry.load(args.root)
     except LoadError as exc:
@@ -72,6 +126,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         return _show(registry, args.profile_id, args.as_json)
     if args.command == "digest":
         return _digest(registry, args.as_json)
+    if args.command == "snapshot":
+        return _snapshot(registry, args)
     print(f"error: unknown command {args.command}", file=sys.stderr)
     return 2
 
@@ -142,3 +198,89 @@ def _digest(registry: Registry, as_json: bool) -> int:
     else:
         print(payload["digest"])
     return 0
+
+
+def _snapshot(registry: Registry, args: argparse.Namespace) -> int:
+    if not registry.ok:
+        for issue in registry.issues:
+            print(issue.render(), file=sys.stderr)
+        print(
+            f"failed: {len(registry.issues)} issue(s); refusing to snapshot",
+            file=sys.stderr,
+        )
+        return 1
+    if args.device_id not in registry.devices:
+        print(f"error: unknown device id: {args.device_id}", file=sys.stderr)
+        return 2
+
+    overlay = None
+    if args.overlay is not None:
+        try:
+            overlay = load_overlay(args.overlay)
+        except LoadError as exc:
+            print(f"error: {exc}", file=sys.stderr)
+            return 2
+
+    try:
+        snapshot = build_snapshot(registry, args.device_id, overlay=overlay)
+    except SnapshotError as exc:
+        for issue in exc.issues:
+            print(issue.render(), file=sys.stderr)
+        print(f"failed: {len(exc.issues)} overlay issue(s)", file=sys.stderr)
+        return 1
+
+    if args.output is None:
+        print(dump_snapshot(snapshot, as_json=args.as_json), end="")
+        return 0
+    try:
+        write_snapshot(snapshot, args.output, as_json=args.as_json)
+    except OSError as exc:
+        print(f"error: cannot write {args.output}: {exc}", file=sys.stderr)
+        return 2
+    return 0
+
+
+def _compatibility(args: argparse.Namespace) -> int:
+    try:
+        requirements = load_requirements(args.requirements)
+    except LoadError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+
+    try:
+        snapshot = load_snapshot(args.snapshot)
+    except LoadError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
+    except SnapshotError as exc:
+        for issue in exc.issues:
+            print(issue.render(), file=sys.stderr)
+        print(f"failed: {len(exc.issues)} snapshot issue(s)", file=sys.stderr)
+        return 1
+
+    report = match(requirements, snapshot)
+    if args.as_json:
+        print(
+            json.dumps(
+                report.as_dict(), indent=2, sort_keys=True, ensure_ascii=False
+            )
+        )
+    else:
+        _print_compatibility(report)
+    return 0 if report.deployable else 1
+
+
+def _print_compatibility(report: CompatibilityReport) -> None:
+    verdict = "deployable" if report.deployable else "not deployable"
+    print(f"{verdict}: {report.device} {report.device_version} ({report.content_hash})")
+    for item in report.capabilities:
+        suffix = "required" if item.required else "optional"
+        print(f"  {item.status}: {item.id} ({suffix})")
+    for warning in report.warnings:
+        print(f"warning: {warning.render()}", file=sys.stderr)
+    for error in report.errors:
+        print(f"error: {error.render()}", file=sys.stderr)
+    print(
+        f"result: {'PASS' if report.deployable else 'FAIL'} "
+        f"({len(report.errors)} error(s), {len(report.warnings)} warning(s))"
+    )
